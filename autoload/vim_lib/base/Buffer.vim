@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-07 18:23:25
+" Last Change: 2015-01-08 00:26:18
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -27,6 +27,7 @@ function! s:Buffer.new(...) " {{{
     let l:obj.number = bufnr(bufnr('$') + 1, 1)
     " }}}
   endif
+  let l:obj.options = {}
   return l:obj
 endfunction " }}}
 
@@ -46,10 +47,20 @@ function! s:Buffer.delete() " {{{
 endfunction " }}}
 
 "" {{{
+" Данный метод отвечает за установку опций и обработчиков событий при активации буфера.
+"" }}}
+function! s:Buffer._setOptions() " {{{
+  for [l:option, l:value] in items(self.options)
+    exe 'let &l:' . l:option . ' = "' . l:value . '"'
+  endfor
+endfunction " }}}
+
+"" {{{
 " Метод деталет вызываемый буфер активным в текущем окне.
 "" }}}
 function! s:Buffer.active() " {{{
   exe 'buffer ' . self.number
+  cal self._setOptions()
 endfunction " }}}
 
 "" {{{
@@ -70,6 +81,16 @@ function! s:Buffer.vactive() " {{{
   let l:newBufNum = bufnr('%')
   call self.active()
   exe 'bw! ' . l:newBufNum
+endfunction " }}}
+
+"" {{{
+" Метод определяет локальную опцию буферу.
+" Данное значение будет установлено для опции при каждой активации буфера методом active, gactive или vactive.
+" @param string name Имя целевой опции.
+" @param string value Устанавливаемое значение.
+"" }}}
+function! s:Buffer.option(name, value) " {{{
+  let self.options[a:name] = a:value
 endfunction " }}}
 
 let g:vim_lib#base#Buffer# = s:Buffer

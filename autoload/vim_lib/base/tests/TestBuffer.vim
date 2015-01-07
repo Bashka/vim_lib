@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-07 18:22:46
+" Last Change: 2015-01-08 00:31:35
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -123,6 +123,23 @@ function! s:Test.testVactive_delTmpBuffer() " {{{
   call l:obj.vactive()
   call self.assertTrue(bufnr('$') == l:bufCount)
   exe 'q'
+endfunction " }}}
+" }}}
+" option {{{
+"" {{{
+" Должен делать вызываемый буфер активным в текущем окне.
+" @covers vim_lib#base#Buffer#.option
+"" }}}
+function! s:Test.testOption() " {{{
+  let l:currentBuf = s:Buffer.new(bufnr('%'))
+  let l:obj = s:Buffer.new()
+  call l:obj.option('filetype', 'test')
+  call l:obj.gactive()
+  call self.assertEquals(&l:filetype, 'test') " Опции устанавливаются после активации в новом окне.
+  call l:currentBuf.active()
+  call l:obj.active()
+  call self.assertEquals(&l:filetype, 'test') " Опции устанавливаются после активации в текущем окне.
+  call l:obj.delete()
 endfunction " }}}
 " }}}
 
