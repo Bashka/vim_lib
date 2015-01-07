@@ -1,18 +1,18 @@
 " Date Create: 2015-01-06 22:20:12
-" Last Change: 2015-01-07 11:47:54
+" Last Change: 2015-01-07 13:22:25
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:List = vim_lib#base#List#
 
-let s:TestList = deepcopy(vim_lib#base#Test#)
+let s:Test = deepcopy(vim_lib#base#Test#)
 
 " new {{{
 "" {{{
 " Должен создавать пустой список.
 " @covers vim_lib#base#List#.new
 "" }}}
-function! s:TestList.testNew_createEmptyList() " {{{
+function! s:Test.testNew_createEmptyList() " {{{
   let l:obj = s:List.new()
   call self.assertEquals(l:obj.length(), 0)
 endfunction " }}}
@@ -21,7 +21,7 @@ endfunction " }}}
 " Должен использовать массив в качестве начальных данных.
 " @covers vim_lib#base#List#.new
 "" }}}
-function! s:TestList.testNew_wrapArray() " {{{
+function! s:Test.testNew_wrapArray() " {{{
   let l:obj = s:List.new([1, 2, 3])
   call self.assertEquals(l:obj.length(), 3)
   call self.assertEquals(l:obj.item(1), 2)
@@ -32,7 +32,7 @@ endfunction " }}}
 " Должен возвращать значение элемента списка по индексу.
 " @covers vim_lib#base#List#.item
 "" }}}
-function! s:TestList.testItem_getValue() " {{{
+function! s:Test.testItem_getValue() " {{{
   let l:obj = s:List.new()
   call l:obj.item(0, 1)
   call l:obj.item(1, 2)
@@ -44,7 +44,7 @@ endfunction " }}}
 " Должен выбрасывать исключение, если элемент с заданым индексом отсутствует.
 " @covers vim_lib#base#List#.item
 "" }}}
-function! s:TestList.testItem_throwExceptionGet() " {{{
+function! s:Test.testItem_throwExceptionGet() " {{{
   let l:obj = s:List.new()
   try
     call l:obj.item(0)
@@ -57,7 +57,7 @@ endfunction " }}}
 " Должен устанавливать значение элементу списка.
 " @covers vim_lib#base#List#.item
 "" }}}
-function! s:TestList.testItem_setValue() " {{{
+function! s:Test.testItem_setValue() " {{{
   let l:obj = s:List.new()
   call l:obj.item(0, 1)
   call self.assertEquals(l:obj.item(0), 1)
@@ -67,7 +67,7 @@ endfunction " }}}
 " Должен выбрасывать исключение, если произошел выход за границы списка.
 " @covers vim_lib#base#List#.item
 "" }}}
-function! s:TestList.testItem_throwExceptionSet() " {{{
+function! s:Test.testItem_throwExceptionSet() " {{{
   let l:obj = s:List.new()
   try
     call l:obj.item(1, 1)
@@ -81,7 +81,7 @@ endfunction " }}}
 " Должен формировать рекурсивную копию списка и возвращать ее в виде массива.
 " @covers vim_lib#base#List#.list
 "" }}}
-function! s:TestList.testList_returnArray() " {{{
+function! s:Test.testList_returnArray() " {{{
   let l:obj = s:List.new()
   call l:obj.item(0, 1)
   call l:obj.item(1, 2)
@@ -96,7 +96,7 @@ endfunction " }}}
 " Должен позволять выдилить хвост списка.
 " @covers vim_lib#base#List#.sec
 "" }}}
-function! s:TestList.testSec_getTail() " {{{
+function! s:Test.testSec_getTail() " {{{
   let l:obj = s:List.new([1, 2, 3, 4, 5])
   call self.assertEquals(l:obj.sec(2).list(), [3, 4, 5])
 endfunction " }}}
@@ -105,7 +105,7 @@ endfunction " }}}
 " Должен позволять выдилить голову списка.
 " @covers vim_lib#base#List#.sec
 "" }}}
-function! s:TestList.testSec_getHead() " {{{
+function! s:Test.testSec_getHead() " {{{
   let l:obj = s:List.new([1, 2, 3, 4, 5])
   call self.assertEquals(l:obj.sec(0, 3).list(), [1, 2, 3, 4])
 endfunction " }}}
@@ -114,7 +114,7 @@ endfunction " }}}
 " Должен позволять выдилить тело списка.
 " @covers vim_lib#base#List#.sec
 "" }}}
-function! s:TestList.testSec_getBody() " {{{
+function! s:Test.testSec_getBody() " {{{
   let l:obj = s:List.new([1, 2, 3, 4, 5])
   call self.assertEquals(l:obj.sec(1, 3).list(), [2, 3, 4])
 endfunction " }}}
@@ -123,7 +123,7 @@ endfunction " }}}
 " Можно использовать отрицательные значения параметров.
 " @covers vim_lib#base#List#.sec
 "" }}}
-function! s:TestList.testSec_negativeParams() " {{{
+function! s:Test.testSec_negativeParams() " {{{
   let l:obj = s:List.new([1, 2, 3, 4, 5])
   call self.assertEquals(l:obj.sec(0, -1).list(), [1, 2, 3, 4, 5])
   call self.assertEquals(l:obj.sec(0, -2).list(), [1, 2, 3, 4])
@@ -132,5 +132,5 @@ function! s:TestList.testSec_negativeParams() " {{{
 endfunction " }}}
 " }}}
 
-let g:vim_lib#base#tests#TestList# = s:TestList
-call s:TestList.run()
+let g:vim_lib#base#tests#TestList# = s:Test
+call s:Test.run()
