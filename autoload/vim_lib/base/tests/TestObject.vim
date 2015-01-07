@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:34:25
-" Last Change: 2015-01-06 20:26:57
+" Last Change: 2015-01-06 22:30:08
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -128,10 +128,20 @@ function! s:TestObject.testNew_initializationComplexStructure() " {{{1
 endfunction " 1}}}
 
 "" {{{1
+" Должен копировать ссылки на конкретные методы класса в экземпляр этого класса.
+" @covers vim_lib#base#Object#.new
+"" 1}}}
+function! s:TestObject.testNew_copyMethodLinks() " {{{1
+  let l:obj = s:Parent.new(1)
+  call l:obj.modificArray(0)
+  call self.assertEquals(l:obj.array[0][0], 0)
+endfunction " 1}}}
+
+"" {{{1
 " Для подклассов интерфейс родительского класса сохраняется в экземпляря родительского класса.
 " @covers vim_lib#base#Object#.new
 "" 1}}}
-function! s:TestObject.testNew_saveMethodsLink() " {{{1
+function! s:TestObject.testNew_noSaveMethodsLink() " {{{1
   let l:a = s:Child.new(1, 2)
   call l:a.parent.modificArray(0)
   call self.assertEquals(l:a.parent.array[0][0], 0)
@@ -159,5 +169,5 @@ function! s:TestObject.testTypeof() " {{{1
   call self.assertFalse(l:obj.class.typeof(s:Subclass))
 endfunction " 1}}}
 
-let g:vim_lib#base#tests#TestObject# = s:Object
+let g:vim_lib#base#tests#TestObject# = s:TestObject
 call s:TestObject.run()

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:26:24
-" Last Change: 2015-01-06 20:51:43
+" Last Change: 2015-01-07 11:21:25
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -36,11 +36,13 @@ endfunction " 1}}}
 "" 1}}}
 function! s:Object.bless(...) " {{{1
   let l:obj = {'class': self, 'parent': (exists('a:1'))? a:1 : self.parent.new()}
+  " Перенос частных методов из класса в объект. {{{2 
   for l:p in keys(self)
     if type(self[l:p]) == 2 && index(['expand', 'bless', 'new', 'typeof'], l:p) == -1
       let l:obj[l:p] = self[l:p]
     endif
   endfor
+  " 2}}}
   return l:obj
 endfunction " 1}}}
 
