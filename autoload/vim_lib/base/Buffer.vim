@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 00:26:18
+" Last Change: 2015-01-08 01:04:50
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -28,6 +28,7 @@ function! s:Buffer.new(...) " {{{
     " }}}
   endif
   let l:obj.options = {}
+  let l:obj.listeners = {}
   return l:obj
 endfunction " }}}
 
@@ -50,9 +51,19 @@ endfunction " }}}
 " Данный метод отвечает за установку опций и обработчиков событий при активации буфера.
 "" }}}
 function! s:Buffer._setOptions() " {{{
+  " Слушатели. {{{
+  for l:mode in keys(self.listeners)
+    for [l:sequence, l:listener] in items(self.listeners[l:mode])
+      " Завершающий команду вывод пустой строки позволяет отчистить статусбар.
+      exe l:mode . 'noremap <buffer> ' . l:sequence . ' :call vim_lib#base#Buffer#.new(bufnr("%")).' . l:listener . '()<CR>:echo ""<CR>'
+    endfor
+  endfor
+  " }}}
+  " Опции. {{{
   for [l:option, l:value] in items(self.options)
     exe 'let &l:' . l:option . ' = "' . l:value . '"'
   endfor
+  " }}}
 endfunction " }}}
 
 "" {{{
@@ -91,6 +102,33 @@ endfunction " }}}
 "" }}}
 function! s:Buffer.option(name, value) " {{{
   let self.options[a:name] = a:value
+endfunction " }}}
+
+"" {{{
+" Метод определяет функцию-обработчик (слушатель) для события клавиатуры.
+" Слушатель должен быть методом данного буфера.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string sequence Комбинация клавишь, для которой создается привязка.
+" @param string listener Имя метода вызываемого буфера, используемого в качестве функции-обработчика.
+"" }}}
+function! s:Buffer.listen(mode, sequence, listener) " {{{
+  if !has_key(self.listeners, a:mode)                                                                                                                  
+    let self.listeners[a:mode] = {}
+  endif
+  let self.listeners[a:mode][a:sequence] = a:listener
+endfunction " }}}
+
+"" {{{
+" Метод удаляет функции-обработчики (слушатели) для события клавиатуры.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string sequence Комбинация клавишь, для которой удаляется привязка.
+"" }}}
+function! s:Buffer.ignore(mode, sequence) " {{{
+  if has_key(self.listeners, a:mode)
+    if has_key(self.listeners[a:mode], a:sequence) 
+      call remove(self.listeners[a:mode][a:sequence])
+    endif
+  endif
 endfunction " }}}
 
 let g:vim_lib#base#Buffer# = s:Buffer
