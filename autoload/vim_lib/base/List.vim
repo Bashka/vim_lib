@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 22:23:22
-" Last Change: 2015-01-07 11:20:28
+" Last Change: 2015-01-07 11:34:48
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -61,6 +61,20 @@ endfunction " 1}}}
 "" 1}}}
 function! s:List.list() " {{{1
   return deepcopy(self.values)
+endfunction " 1}}}
+
+"" {{{1
+" Метод формирует и возвращает срез списка в виде нового списка.
+" @param integer start Индекс элемента начала диапазона. Использование отрицательного значения эквивалентно: len() - значение.
+" @param integer end [optional] Индекс элемента конца диапазона включительно. Если параметр не задан, выполняется выборка всех элементов до конца списка. Использование отрицательного значения эквивалентно: len() - значение.
+" @return vim_lib#base#List# Результирующий список, содержащий срез исходного списка.
+"" 1}}}
+function! s:List.sec(start, ...) " {{{1
+  if !exists('a:1')
+    return s:List.new(self.values[a:start :])
+  else
+    return s:List.new(self.values[a:start : a:1])
+  endif
 endfunction " 1}}}
 
 let g:vim_lib#base#List# = s:List

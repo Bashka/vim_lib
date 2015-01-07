@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 22:20:12
-" Last Change: 2015-01-07 11:19:01
+" Last Change: 2015-01-07 11:36:17
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -86,6 +86,45 @@ function! s:TestList.testList_returnArray() " {{{1
   let l:list = l:obj.list()
   call l:obj.item(0, 0)
   call self.assertEquals(l:list, [1, 2, 3])
+endfunction " 1}}}
+
+"" {{{1
+" Должен позволять выдилить хвост списка.
+" @covers vim_lib#base#List#.sec
+"" 1}}}
+function! s:TestList.testSec_getTail() " {{{1
+  let l:obj = s:List.new([1, 2, 3, 4, 5])
+  call self.assertEquals(l:obj.sec(2).list(), [3, 4, 5])
+endfunction " 1}}}
+
+"" {{{1
+" Должен позволять выдилить голову списка.
+" @covers vim_lib#base#List#.sec
+"" 1}}}
+function! s:TestList.testSec_getHead() " {{{1
+  let l:obj = s:List.new([1, 2, 3, 4, 5])
+  call self.assertEquals(l:obj.sec(0, 3).list(), [1, 2, 3, 4])
+endfunction " 1}}}
+
+"" {{{1
+" Должен позволять выдилить тело списка.
+" @covers vim_lib#base#List#.sec
+"" 1}}}
+function! s:TestList.testSec_getBody() " {{{1
+  let l:obj = s:List.new([1, 2, 3, 4, 5])
+  call self.assertEquals(l:obj.sec(1, 3).list(), [2, 3, 4])
+endfunction " 1}}}
+
+"" {{{1
+" Можно использовать отрицательные значения параметров.
+" @covers vim_lib#base#List#.sec
+"" 1}}}
+function! s:TestList.testSec_negativeParams() " {{{1
+  let l:obj = s:List.new([1, 2, 3, 4, 5])
+  call self.assertEquals(l:obj.sec(0, -1).list(), [1, 2, 3, 4, 5])
+  call self.assertEquals(l:obj.sec(0, -2).list(), [1, 2, 3, 4])
+  call self.assertEquals(l:obj.sec(-2).list(), [4, 5])
+  call self.assertEquals(l:obj.sec(-3, -2).list(), [3, 4])
 endfunction " 1}}}
 
 let g:vim_lib#base#tests#TestList# = s:TestList
