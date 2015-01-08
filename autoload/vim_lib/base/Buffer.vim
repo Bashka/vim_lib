@@ -1,11 +1,17 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 12:08:11
+" Last Change: 2015-01-08 12:15:17
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
 
+"" {{{
+" Класс представляет буфер редактора.
+"" }}}
 let s:Buffer = s:Object.expand()
+"" {{{
+" @var hash Объектный пул, хранящий все экземпляры данного класса. Используется для исключения возможности создания двух объектов с одним номером буфера.
+"" }}}
 let s:Buffer.objectPool = {}
 
 "" {{{
@@ -21,6 +27,10 @@ function! s:Buffer.new(...) " {{{
   endif
   " }}}
   let l:obj = self.bless()
+  "" {{{
+  " @var integer Номер буфера.
+  "" }}}
+  let l:obj.number = 0
   if exists('a:1')
     " Обращение к существующему буферу. {{{
     if !bufexists(a:1)
@@ -33,7 +43,13 @@ function! s:Buffer.new(...) " {{{
     let l:obj.number = bufnr(bufnr('$') + 1, 1)
     " }}}
   endif
+  "" {{{
+  " @var hash Словарь опций, применяемых к буферу при его активации. Словарь имеет следующую структуру: [опция: значение, ...].
+  "" }}}
   let l:obj.options = {}
+  "" {{{
+  " @var hash Словарь привязок, применяемых к буферу при его активации. Словарь имеет следующую структуру: [режим: [комбинация: метод], ...].
+  "" }}}
   let l:obj.listeners = {}
   let l:obj.class.objectPool[l:obj.getNum()] = l:obj
   return l:obj

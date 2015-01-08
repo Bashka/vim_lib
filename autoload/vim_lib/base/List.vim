@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 22:23:22
-" Last Change: 2015-01-07 11:44:47
+" Last Change: 2015-01-08 12:16:22
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -17,6 +17,9 @@ let s:List = s:Object.expand()
 "" }}}
 function! s:List.new(...) " {{{
   let l:obj = self.bless()
+  "" {{{
+  " @var array Массив значений списка.
+  "" }}}
   let l:obj.values = (exists('a:1') && type(a:1) == 3)? a:1 : []
   return l:obj
 endfunction " }}}
