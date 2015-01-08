@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:15:51
-" Last Change: 2015-01-08 11:39:02
+" Last Change: 2015-01-08 11:53:42
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -259,6 +259,7 @@ endfunction " }}}
 " Предположение указанного ответа команды редактора.
 " @param string command Целевая команда.
 " @param string assert Ожидаемый ответ.
+" @author Luc Hermitte <EMAIL:hermitte {at} free {dot} fr> <URL:http://code.google.com/p/lh-vim/>}
 "" }}}
 function! s:Test.assertExec(command, assert) " {{{
   let self.countAsserting += 1

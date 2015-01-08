@@ -1,11 +1,12 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 11:49:41
+" Last Change: 2015-01-08 12:08:11
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
 
 let s:Buffer = s:Object.expand()
+let s:Buffer.objectPool = {}
 
 "" {{{
 " Конструктор создает объектное представление буфера.
@@ -14,6 +15,11 @@ let s:Buffer = s:Object.expand()
 " @return vim_lib#base#Buffer# Целевой буфер.
 "" }}}
 function! s:Buffer.new(...) " {{{
+  " Получение объекта из пула. {{{
+  if exists('a:1') && has_key(g:vim_lib#base#Buffer#.objectPool, a:1)
+    return g:vim_lib#base#Buffer#.objectPool[a:1]
+  endif
+  " }}}
   let l:obj = self.bless()
   if exists('a:1')
     " Обращение к существующему буферу. {{{
@@ -29,6 +35,7 @@ function! s:Buffer.new(...) " {{{
   endif
   let l:obj.options = {}
   let l:obj.listeners = {}
+  let l:obj.class.objectPool[l:obj.getNum()] = l:obj
   return l:obj
 endfunction " }}}
 
@@ -45,6 +52,7 @@ endfunction " }}}
 "" }}}
 function! s:Buffer.delete() " {{{
   exe 'bw! ' . self.getNum()
+  call remove(self.class.objectPool, self.getNum())
 endfunction " }}}
 
 "" {{{

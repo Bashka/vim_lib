@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-08 11:52:11
+" Last Change: 2015-01-08 12:08:26
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -37,6 +37,19 @@ function s:Test.testNew_createBuffer() " {{{
   let l:bufCount = bufnr('$')
   let l:obj = s:Buffer.new()
   call self.assertTrue(bufnr('$') > l:bufCount)
+  exe 'bw! ' . l:obj.getNum()
+endfunction " }}}
+
+"" {{{
+" Должен сохранять и восстанавливать объекты из пула.
+" @covers vim_lib#base#Buffer#.new
+"" }}}
+function s:Test.testNew_usePool() " {{{
+  let l:bufCount = bufnr('$')
+  let l:obj = s:Buffer.new()
+  let l:obj.test = 1
+  let l:obj2 = s:Buffer.new(l:obj.getNum())
+  call self.assertEquals(l:obj.test, l:obj2.test)
   exe 'bw! ' . l:obj.getNum()
 endfunction " }}}
 " }}}
