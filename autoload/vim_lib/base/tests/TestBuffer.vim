@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-08 12:08:26
+" Last Change: 2015-01-08 18:20:42
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -180,6 +180,27 @@ function s:Test.testIgnore() " {{{
   call self.assertDictNotHasKey(l:obj.listeners['n'], 'q')
   call l:obj.gactive()
   call self.assertExec('nnoremap q', "\n\n" . 'Привязки не найдены')
+  call l:obj.delete()
+endfunction " }}}
+" }}}
+" render {{{
+function! s:Test.testRender_setStr() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.option('buftype', 'nofile')
+  let l:obj.render = "'test'"
+  call l:obj.gactive()
+  call self.assertEquals('test', join(getline(0, '$'), ''))
+  call l:obj.delete()
+endfunction " }}}
+
+function! s:Test.testRender_setMethod() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.option('buftype', 'nofile')
+  function! l:obj.render() " {{{
+    return 'test'
+  endfunction " }}}
+  call l:obj.gactive()
+  call self.assertEquals('test', join(getline(0, '$'), ''))
   call l:obj.delete()
 endfunction " }}}
 " }}}

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 12:15:17
+" Last Change: 2015-01-08 18:15:54
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -72,9 +72,20 @@ function! s:Buffer.delete() " {{{
 endfunction " }}}
 
 "" {{{
-" Данный метод отвечает за установку опций и обработчиков событий при активации буфера.
+" Данный метод отвечает за рендеринг содержимого буфера, установку опций и обработчиков событий при активации буфера.
 "" }}}
 function! s:Buffer._setOptions() " {{{
+  " render {{{
+  if has_key(self, 'render')
+    normal ggVGd
+    if type(self.render) == 2
+      silent put = self.render()
+    else
+      exe 'silent put = ' . self.render
+    endif
+    keepjumps 0d
+  endif
+  " }}}
   " Слушатели. {{{
   for l:mode in keys(self.listeners)
     for [l:sequence, l:listener] in items(self.listeners[l:mode])
@@ -92,6 +103,15 @@ endfunction " }}}
 
 "" {{{
 " Метод деталет вызываемый буфер активным в текущем окне.
+" При активации буфера используется свойство или метод render, который отвечает за создание содержимого этого буфера. В качестве этого свойства можно указать вызов любой функции редактора, которая возвращает строку:
+"   let buffer.render = 'myModule#run()'
+" конкретное значение в виде строки, которое будет установлено в буфер:
+"   let buffer.render = "'Hello world'"
+" либо определить метод, который будет возвращать строку:
+"   function! buffer.render()
+"     return self.myData
+"   endfunction
+" в этом случае метод будет вызываться от имени объекта, представляющего буфер.
 "" }}}
 function! s:Buffer.active() " {{{
   exe 'buffer ' . self.number
@@ -100,6 +120,7 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
+" @see vim_lib#base#Buffer#.active
 "" }}}
 function! s:Buffer.gactive() " {{{
   silent! new
@@ -110,6 +131,7 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
+" @see vim_lib#base#Buffer#.active
 "" }}}
 function! s:Buffer.vactive() " {{{
   silent! vnew
