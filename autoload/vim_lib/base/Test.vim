@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:15:51
-" Last Change: 2015-01-07 11:45:56
+" Last Change: 2015-01-08 11:39:02
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -253,6 +253,26 @@ function! s:Test.assertNotEquals(assert, actual) " {{{
   if l:assertType == l:actualType && a:assertValue == a:actualValue
     call self.fail('assertNotEquals', 'Failed asserting that <' . l:assertType . ':' . string(a:assertValue) . '> not equals value <' . l:actualType . ':' . string(a:actualValue) . '>.')
   endif
+endfunction " }}}
+
+"" {{{
+" Предположение указанного ответа команды редактора.
+" @param string command Целевая команда.
+" @param string assert Ожидаемый ответ.
+"" }}}
+function! s:Test.assertExec(command, assert) " {{{
+  let self.countAsserting += 1
+  let self.countTestAsserting += 1
+  let l:save_a = @a
+  try
+    silent! redir @a
+    silent! exe a:command
+    redir END
+  finally
+    let l:actual = @a
+    let @a = l:save_a
+  endtry
+  call self._compare('assertExec', a:assert, l:actual)
 endfunction " }}}
 
 "" {{{

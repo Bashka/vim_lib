@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 01:04:50
+" Last Change: 2015-01-08 11:49:41
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -78,7 +78,7 @@ endfunction " }}}
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
 "" }}}
 function! s:Buffer.gactive() " {{{
-  new
+  silent! new
   let l:newBufNum = bufnr('%')
   call self.active()
   exe 'bw! ' . l:newBufNum
@@ -88,7 +88,7 @@ endfunction " }}}
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
 "" }}}
 function! s:Buffer.vactive() " {{{
-  vnew
+  silent! vnew
   let l:newBufNum = bufnr('%')
   call self.active()
   exe 'bw! ' . l:newBufNum
@@ -126,7 +126,7 @@ endfunction " }}}
 function! s:Buffer.ignore(mode, sequence) " {{{
   if has_key(self.listeners, a:mode)
     if has_key(self.listeners[a:mode], a:sequence) 
-      call remove(self.listeners[a:mode][a:sequence])
+      call remove(self.listeners[a:mode], a:sequence)
     endif
   endif
 endfunction " }}}
