@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 18:15:54
+" Last Change: 2015-01-08 23:07:42
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -8,11 +8,11 @@ let s:Object = g:vim_lib#base#Object#
 "" {{{
 " Класс представляет буфер редактора.
 "" }}}
-let s:Buffer = s:Object.expand()
+let s:Class = s:Object.expand()
 "" {{{
 " @var hash Объектный пул, хранящий все экземпляры данного класса. Используется для исключения возможности создания двух объектов с одним номером буфера.
 "" }}}
-let s:Buffer.objectPool = {}
+let s:Class.objectPool = {}
 
 "" {{{
 " Конструктор создает объектное представление буфера.
@@ -20,7 +20,7 @@ let s:Buffer.objectPool = {}
 " @throws IndexOutOfRangeException Выбрасывается при обращении к отсутствующему буферу.
 " @return vim_lib#base#Buffer# Целевой буфер.
 "" }}}
-function! s:Buffer.new(...) " {{{
+function! s:Class.new(...) " {{{
   " Получение объекта из пула. {{{
   if exists('a:1') && has_key(g:vim_lib#base#Buffer#.objectPool, a:1)
     return g:vim_lib#base#Buffer#.objectPool[a:1]
@@ -59,14 +59,14 @@ endfunction " }}}
 " Метод возвращает номер вызываемого буфера.
 " @return integer Номер буфера.
 "" }}}
-function! s:Buffer.getNum() " {{{
+function! s:Class.getNum() " {{{
   return self.number
 endfunction " }}}
 
 "" {{{
 " Метод удаляет вызываемый буфер.
 "" }}}
-function! s:Buffer.delete() " {{{
+function! s:Class.delete() " {{{
   exe 'bw! ' . self.getNum()
   call remove(self.class.objectPool, self.getNum())
 endfunction " }}}
@@ -74,7 +74,7 @@ endfunction " }}}
 "" {{{
 " Данный метод отвечает за рендеринг содержимого буфера, установку опций и обработчиков событий при активации буфера.
 "" }}}
-function! s:Buffer._setOptions() " {{{
+function! s:Class._setOptions() " {{{
   " render {{{
   if has_key(self, 'render')
     normal ggVGd
@@ -113,7 +113,7 @@ endfunction " }}}
 "   endfunction
 " в этом случае метод будет вызываться от имени объекта, представляющего буфер.
 "" }}}
-function! s:Buffer.active() " {{{
+function! s:Class.active() " {{{
   exe 'buffer ' . self.number
   cal self._setOptions()
 endfunction " }}}
@@ -122,7 +122,7 @@ endfunction " }}}
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
 " @see vim_lib#base#Buffer#.active
 "" }}}
-function! s:Buffer.gactive() " {{{
+function! s:Class.gactive() " {{{
   silent! new
   let l:newBufNum = bufnr('%')
   call self.active()
@@ -133,7 +133,7 @@ endfunction " }}}
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
 " @see vim_lib#base#Buffer#.active
 "" }}}
-function! s:Buffer.vactive() " {{{
+function! s:Class.vactive() " {{{
   silent! vnew
   let l:newBufNum = bufnr('%')
   call self.active()
@@ -146,7 +146,7 @@ endfunction " }}}
 " @param string name Имя целевой опции.
 " @param string value Устанавливаемое значение.
 "" }}}
-function! s:Buffer.option(name, value) " {{{
+function! s:Class.option(name, value) " {{{
   let self.options[a:name] = a:value
 endfunction " }}}
 
@@ -157,7 +157,7 @@ endfunction " }}}
 " @param string sequence Комбинация клавишь, для которой создается привязка.
 " @param string listener Имя метода вызываемого буфера, используемого в качестве функции-обработчика.
 "" }}}
-function! s:Buffer.listen(mode, sequence, listener) " {{{
+function! s:Class.listen(mode, sequence, listener) " {{{
   if !has_key(self.listeners, a:mode)                                                                                                                  
     let self.listeners[a:mode] = {}
   endif
@@ -169,7 +169,7 @@ endfunction " }}}
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой удаляется привязка.
 "" }}}
-function! s:Buffer.ignore(mode, sequence) " {{{
+function! s:Class.ignore(mode, sequence) " {{{
   if has_key(self.listeners, a:mode)
     if has_key(self.listeners[a:mode], a:sequence) 
       call remove(self.listeners[a:mode], a:sequence)
@@ -177,4 +177,4 @@ function! s:Buffer.ignore(mode, sequence) " {{{
   endif
 endfunction " }}}
 
-let g:vim_lib#base#Buffer# = s:Buffer
+let g:vim_lib#base#Buffer# = s:Class

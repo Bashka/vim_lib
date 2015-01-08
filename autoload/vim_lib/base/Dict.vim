@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 11:55:51
-" Last Change: 2015-01-08 12:16:50
+" Last Change: 2015-01-08 23:07:25
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -8,14 +8,14 @@ let s:Object = g:vim_lib#base#Object#
 "" {{{
 " Класс представляет словарь с доступом к элементам по ключу.
 "" }}}
-let s:Dict = s:Object.expand()
+let s:Class = s:Object.expand()
 
 "" {{{
 " Конструктор, формирующий словарь на основании заданного массива или хэша данных.
 " @param hash|array data [optional] Исходный массив данных, имеющий следующую структуру: [[key, value], ...] или хэш. Если параметр не задан, создается пустой словарь.
 " @return vim_lib#base#Dict# Целевой словарь.
 "" }}}
-function! s:Dict.new(...) " {{{
+function! s:Class.new(...) " {{{
   let l:obj = self.bless()
   if exists('a:1')
     if type(a:1) == 3
@@ -41,7 +41,7 @@ endfunction " }}}
 " Метод вычисляет длину словаря.
 " @return integer Длина словаря.
 "" }}}
-function! s:Dict.length() " {{{
+function! s:Class.length() " {{{
   return len(self.values)
 endfunction " }}}
 
@@ -52,7 +52,7 @@ endfunction " }}}
 " @throws IndexOutOfRangeException Выбрасывается при обращении к отсутствующему элементу словаря.
 " @return mixed Запрашиваемое значение элемента.
 "" }}}
-function! s:Dict.item(key, ...) " {{{
+function! s:Class.item(key, ...) " {{{
   if !exists('a:1')
     " Возврат значения. {{{ 
     if !has_key(self.values, a:key)
@@ -71,7 +71,7 @@ endfunction " }}}
 " Метод возвращает массив ключей, используемый в словаре.
 " @return array Массив ключей в словаре.
 "" }}}
-function! s:Dict.keys() " {{{
+function! s:Class.keys() " {{{
   return keys(self.values)
 endfunction " }}}
 
@@ -79,7 +79,7 @@ endfunction " }}}
 " Метод возвращает массив значений элементов словаря.
 " @return array Массив значений элементов словаря.
 "" }}}
-function! s:Dict.vals() " {{{
+function! s:Class.vals() " {{{
   return values(self.values)
 endfunction " }}}
 
@@ -87,8 +87,8 @@ endfunction " }}}
 " Метод возвращает двумерный массив ключей и значений элементов словаря.
 " @return array Двумерный массив следующей структуры: [[key, val], ...].
 "" }}}
-function! s:Dict.items() " {{{
+function! s:Class.items() " {{{
   return items(self.values)
 endfunction " }}}
 
-let g:vim_lib#base#Dict# = s:Dict
+let g:vim_lib#base#Dict# = s:Class

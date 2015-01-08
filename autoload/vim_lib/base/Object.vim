@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:26:24
-" Last Change: 2015-01-07 11:44:19
+" Last Change: 2015-01-08 23:05:50
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -8,7 +8,7 @@
 " Для инстанциации данного класса или его подклассов используется метод new, который создает и инициализирует объект класса.
 " Отличительной особенностью объекта является наличие свойства class, которое ссылается на класс, экземпляром которого является объект. Классы этого свойства не имеют.
 "" }}}
-let s:Object = {}
+let s:Class = {}
 
 "" {{{
 " Метод создает дочерний по отношению к вызываемому классу класс.
@@ -16,7 +16,7 @@ let s:Object = {}
 " Все методы вызываемого (родительского) класса копируются в создаваемый дочерний класс.
 " @return hash Класс, являющийся дочерним по отношению к вызываемому классу.
 "" }}}
-function s:Object.expand() " {{{
+function! s:Class.expand() " {{{
   let l:child = {'parent': self}
   " Перенос ссылок на методы класса в подкласс. {{{
   let l:child.expand = self.expand
@@ -34,7 +34,7 @@ endfunction " }}}
 " @param hash parent [optional] Инициализированный экземпляр родительского класса. Если параметр не задан, используется конструктор по умолчанию для родительского класса.
 " @return hash Неинизиализированный экземпляр класса.
 "" }}}
-function! s:Object.bless(...) " {{{
+function! s:Class.bless(...) " {{{
   let l:obj = {'class': self, 'parent': (exists('a:1'))? a:1 : self.parent.new()}
   " Перенос частных методов из класса в объект. {{{ 
   for l:p in keys(self)
@@ -60,7 +60,7 @@ endfunction " }}}
 "   endfunction
 " @return hash экземпляр вызываемого класса.
 "" }}}
-function s:Object.new() " {{{
+function! s:Class.new() " {{{
   if has_key(self, 'parent')
     let l:obj = self.bless()
   else
@@ -74,7 +74,7 @@ endfunction " }}}
 " @param hash type Целевой класс.
 " @return bool Если вызываемый класс является целевым или его потомком, метод возвращает 1, иначе 0.
 "" }}}
-function! s:Object.typeof(type) " {{{
+function! s:Class.typeof(type) " {{{
   let l:currentClass = self
   while l:currentClass != a:type
     if !has_key(l:currentClass, 'parent')
@@ -85,4 +85,4 @@ function! s:Object.typeof(type) " {{{
   return 1
 endfunction " }}}
 
-let g:vim_lib#base#Object# = s:Object
+let g:vim_lib#base#Object# = s:Class
