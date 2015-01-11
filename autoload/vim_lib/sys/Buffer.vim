@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-11 11:54:00
+" Last Change: 2015-01-11 12:01:36
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -53,6 +53,15 @@ function! s:Class.new(...) " {{{
   let l:obj.listeners = {}
   let l:obj.class.objectPool[l:obj.getNum()] = l:obj
   return l:obj
+endfunction " }}}
+
+"" {{{
+" Конструктор создает объектное представление текущего буфера.
+" @throws IndexOutOfRangeException Выбрасывается при обращении к отсутствующему буферу.
+" @return vim_lib#sys#Buffer# Целевой буфер.
+"" }}}
+function! s:Class.current() " {{{
+  return self.new(bufnr('%'))
 endfunction " }}}
 
 "" {{{

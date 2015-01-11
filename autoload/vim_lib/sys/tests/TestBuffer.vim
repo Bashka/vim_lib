@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-11 11:45:54
+" Last Change: 2015-01-11 12:02:01
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -7,7 +7,7 @@ let s:Buffer = vim_lib#sys#Buffer#
 
 let s:Test = deepcopy(vim_lib#base#Test#)
 
-" new {{{
+" new, current {{{
 "" {{{
 " Должен запоминать заданный номер буфера.
 " @covers vim_lib#sys#Buffer#.new
@@ -51,6 +51,15 @@ function s:Test.testNew_usePool() " {{{
   let l:obj2 = s:Buffer.new(l:obj.getNum())
   call self.assertEquals(l:obj.test, l:obj2.test)
   exe 'bw! ' . l:obj.getNum()
+endfunction " }}}
+
+"" {{{
+" Должен создавать объект текущего буфера.
+" @covers vim_lib#sys#Buffer#.current
+"" }}}
+function! s:Test.testCurrent() " {{{
+  let l:obj = s:Buffer.current()
+  call self.assertEquals(l:obj.getNum(), bufnr('%'))
 endfunction " }}}
 " }}}
 " getNum {{{

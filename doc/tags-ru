@@ -1,7 +1,6 @@
 !_TAG_FILE_ENCODING	utf-8	//
 vim_lib	vim_lib.rux	/*vim_lib*
 vim_lib-base	vim_lib.rux	/*vim_lib-base*
-vim_lib-base-buffer	vim_lib.rux	/*vim_lib-base-buffer*
 vim_lib-base-dict	vim_lib.rux	/*vim_lib-base-dict*
 vim_lib-base-list	vim_lib.rux	/*vim_lib-base-list*
 vim_lib-base-object	vim_lib.rux	/*vim_lib-base-object*
@@ -9,6 +8,7 @@ vim_lib-base-stack	vim_lib.rux	/*vim_lib-base-stack*
 vim_lib-base-test	vim_lib.rux	/*vim_lib-base-test*
 vim_lib-description	vim_lib.rux	/*vim_lib-description*
 vim_lib-sys	vim_lib.rux	/*vim_lib-sys*
+vim_lib-sys-buffer	vim_lib.rux	/*vim_lib-sys-buffer*
 vim_lib-sys-nullplugin	vim_lib.rux	/*vim_lib-sys-nullplugin*
 vim_lib-sys-plugin	vim_lib.rux	/*vim_lib-sys-plugin*
 vim_lib.txt	vim_lib.rux	/*vim_lib.txt*
