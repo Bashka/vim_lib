@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:34:25
-" Last Change: 2015-01-08 23:08:13
+" Last Change: 2015-01-11 15:55:50
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -8,7 +8,7 @@ let s:Subclass = vim_lib#base#tests#Object#Subclass#
 let s:Parent = vim_lib#base#tests#Object#Parent#
 let s:Child = vim_lib#base#tests#Object#Child#
 
-let s:Test = deepcopy(vim_lib#base#Test#)
+let s:Test = vim_lib#base#Test#.expand()
 
 " expand {{{
 "" {{{
@@ -71,6 +71,15 @@ endfunction " }}}
 function s:Test.testBless_copyMethods() " {{{
   let s:par = s:Parent.bless()
   call self.assertDictHasKey(s:par, 'modificArray')
+endfunction " }}}
+
+"" {{{
+" Не должен копировать статичные методы класса в объект.
+" @covers vim_lib#base#Object#.bless
+"" }}}
+function s:Test.testBless_staticMethod() " {{{
+  let s:par = s:Parent.bless()
+  call self.assertDictNotHasKey(s:par, '__staticMethod')
 endfunction " }}}
 " }}}
 " new {{{

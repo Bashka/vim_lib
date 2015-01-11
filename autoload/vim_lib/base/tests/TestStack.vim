@@ -1,11 +1,11 @@
 " Date Create: 2015-01-08 23:10:42
-" Last Change: 2015-01-08 23:23:19
+" Last Change: 2015-01-11 15:55:04
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Stack = vim_lib#base#Stack#
 
-let s:Test = deepcopy(vim_lib#base#Test#)
+let s:Test = vim_lib#base#Test#.expand()
 
 " new {{{
 "" {{{

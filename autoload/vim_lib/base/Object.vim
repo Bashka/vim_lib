@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:26:24
-" Last Change: 2015-01-08 23:05:50
+" Last Change: 2015-01-11 14:12:02
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -30,7 +30,7 @@ endfunction " }}}
 "" {{{
 " Метод создает неинициализированный экземпляр вызываемого класса.
 " Метод устанавливает свойства class и parent объекта в соответствии с требованиями экземпляра класса.
-" Метод копирует методы класса в объект.
+" Метод копирует не статичные методы класса в объект. Статичными методами класса являются методы, начинающиеся на два знака подчеркивания (__).
 " @param hash parent [optional] Инициализированный экземпляр родительского класса. Если параметр не задан, используется конструктор по умолчанию для родительского класса.
 " @return hash Неинизиализированный экземпляр класса.
 "" }}}
@@ -38,7 +38,7 @@ function! s:Class.bless(...) " {{{
   let l:obj = {'class': self, 'parent': (exists('a:1'))? a:1 : self.parent.new()}
   " Перенос частных методов из класса в объект. {{{ 
   for l:p in keys(self)
-    if type(self[l:p]) == 2 && index(['expand', 'bless', 'new', 'typeof'], l:p) == -1
+    if type(self[l:p]) == 2 && index(['expand', 'bless', 'new', 'typeof'], l:p) == -1 && l:p[0:1] != '__'
       let l:obj[l:p] = self[l:p]
     endif
   endfor

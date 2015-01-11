@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-11 12:01:36
+" Last Change: 2015-01-11 14:47:50
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -12,7 +12,7 @@ let s:Class = s:Object.expand()
 "" {{{
 " @var hash Объектный пул, хранящий все экземпляры данного класса. Используется для исключения возможности создания двух объектов с одним номером буфера.
 "" }}}
-let s:Class.objectPool = {}
+let s:Class.buffers = {}
 
 "" {{{
 " Конструктор создает объектное представление буфера.
@@ -22,8 +22,8 @@ let s:Class.objectPool = {}
 "" }}}
 function! s:Class.new(...) " {{{
   " Получение объекта из пула. {{{
-  if exists('a:1') && has_key(g:vim_lib#sys#Buffer#.objectPool, a:1)
-    return g:vim_lib#sys#Buffer#.objectPool[a:1]
+  if exists('a:1') && has_key(self.buffers, a:1)
+    return self.buffers[a:1]
   endif
   " }}}
   let l:obj = self.bless()
@@ -51,7 +51,7 @@ function! s:Class.new(...) " {{{
   " @var hash Словарь привязок, применяемых к буферу при его активации. Словарь имеет следующую структуру: [режим: [комбинация: метод], ...].
   "" }}}
   let l:obj.listeners = {}
-  let l:obj.class.objectPool[l:obj.getNum()] = l:obj
+  let self.buffers[l:obj.getNum()] = l:obj
   return l:obj
 endfunction " }}}
 
@@ -77,7 +77,7 @@ endfunction " }}}
 "" }}}
 function! s:Class.delete() " {{{
   exe 'bw! ' . self.getNum()
-  call remove(self.class.objectPool, self.getNum())
+  call remove(self.class.buffers, self.getNum())
 endfunction " }}}
 
 "" {{{

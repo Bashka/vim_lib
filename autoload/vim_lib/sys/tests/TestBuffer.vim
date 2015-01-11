@@ -1,11 +1,11 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-11 12:02:01
+" Last Change: 2015-01-11 15:56:41
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Buffer = vim_lib#sys#Buffer#
 
-let s:Test = deepcopy(vim_lib#base#Test#)
+let s:Test = vim_lib#base#Test#.expand()
 
 " new, current {{{
 "" {{{
@@ -45,7 +45,6 @@ endfunction " }}}
 " @covers vim_lib#sys#Buffer#.new
 "" }}}
 function s:Test.testNew_usePool() " {{{
-  let l:bufCount = bufnr('$')
   let l:obj = s:Buffer.new()
   let l:obj.test = 1
   let l:obj2 = s:Buffer.new(l:obj.getNum())

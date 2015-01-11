@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:15:51
-" Last Change: 2015-01-08 11:53:42
+" Last Change: 2015-01-11 15:56:18
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -25,6 +25,14 @@ let s:Test.countFail = 0
 " @var integer Порядковые номера допущенных предположений (проверок).
 "" }}}
 let s:Test.countTestAsserting = 0
+
+"" {{{
+" Метод создает новый модульный тест.
+" @return vim_lib#base#Test# Модульный тест.
+"" }}}
+function! s:Test.expand() " {{{
+  return deepcopy(self)
+endfunction " }}}
 
 "" {{{
 " Запуск метода вызываемого объекта для тестирования.
