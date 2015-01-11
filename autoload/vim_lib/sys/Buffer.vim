@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-08 23:07:42
+" Last Change: 2015-01-11 11:54:00
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -18,12 +18,12 @@ let s:Class.objectPool = {}
 " Конструктор создает объектное представление буфера.
 " @param integer number Номер целевого буфера. Если параметр не задан, создается новый буфер.
 " @throws IndexOutOfRangeException Выбрасывается при обращении к отсутствующему буферу.
-" @return vim_lib#base#Buffer# Целевой буфер.
+" @return vim_lib#sys#Buffer# Целевой буфер.
 "" }}}
 function! s:Class.new(...) " {{{
   " Получение объекта из пула. {{{
-  if exists('a:1') && has_key(g:vim_lib#base#Buffer#.objectPool, a:1)
-    return g:vim_lib#base#Buffer#.objectPool[a:1]
+  if exists('a:1') && has_key(g:vim_lib#sys#Buffer#.objectPool, a:1)
+    return g:vim_lib#sys#Buffer#.objectPool[a:1]
   endif
   " }}}
   let l:obj = self.bless()
@@ -90,7 +90,7 @@ function! s:Class._setOptions() " {{{
   for l:mode in keys(self.listeners)
     for [l:sequence, l:listener] in items(self.listeners[l:mode])
       " Завершающий команду вывод пустой строки позволяет отчистить статусбар.
-      exe l:mode . 'noremap <buffer> ' . l:sequence . ' :call vim_lib#base#Buffer#.new(bufnr("%")).' . l:listener . '()<CR>:echo ""<CR>'
+      exe l:mode . 'noremap <buffer> ' . l:sequence . ' :call vim_lib#sys#Buffer#.new(bufnr("%")).' . l:listener . '()<CR>:echo ""<CR>'
     endfor
   endfor
   " }}}
@@ -120,7 +120,7 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
-" @see vim_lib#base#Buffer#.active
+" @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.gactive() " {{{
   silent! new
@@ -131,7 +131,7 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
-" @see vim_lib#base#Buffer#.active
+" @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.vactive() " {{{
   silent! vnew
@@ -177,4 +177,4 @@ function! s:Class.ignore(mode, sequence) " {{{
   endif
 endfunction " }}}
 
-let g:vim_lib#base#Buffer# = s:Class
+let g:vim_lib#sys#Buffer# = s:Class

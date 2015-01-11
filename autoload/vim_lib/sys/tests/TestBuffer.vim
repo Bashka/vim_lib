@@ -1,16 +1,16 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-08 23:08:22
+" Last Change: 2015-01-11 11:45:54
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
-let s:Buffer = vim_lib#base#Buffer#
+let s:Buffer = vim_lib#sys#Buffer#
 
 let s:Test = deepcopy(vim_lib#base#Test#)
 
 " new {{{
 "" {{{
 " Должен запоминать заданный номер буфера.
-" @covers vim_lib#base#Buffer#.new
+" @covers vim_lib#sys#Buffer#.new
 "" }}}
 function s:Test.testNew_saveNum() " {{{
   let l:obj = s:Buffer.new(bufnr('%'))
@@ -19,7 +19,7 @@ endfunction " }}}
 
 "" {{{
 " Должен выбрасывать исключение в случае, если требуемого буфера не сущесвует.
-" @covers vim_lib#base#Buffer#.new
+" @covers vim_lib#sys#Buffer#.new
 "" }}}
 function s:Test.testNew_throwOutOfRange() " {{{
   try
@@ -31,7 +31,7 @@ endfunction " }}}
 
 "" {{{
 " Должен создавать новый пустой буфер.
-" @covers vim_lib#base#Buffer#.new
+" @covers vim_lib#sys#Buffer#.new
 "" }}}
 function s:Test.testNew_createBuffer() " {{{
   let l:bufCount = bufnr('$')
@@ -42,7 +42,7 @@ endfunction " }}}
 
 "" {{{
 " Должен сохранять и восстанавливать объекты из пула.
-" @covers vim_lib#base#Buffer#.new
+" @covers vim_lib#sys#Buffer#.new
 "" }}}
 function s:Test.testNew_usePool() " {{{
   let l:bufCount = bufnr('$')
@@ -56,7 +56,7 @@ endfunction " }}}
 " getNum {{{
 "" {{{
 " Должен возвращать номер буфера.
-" @covers vim_lib#base#Buffer#.getNum
+" @covers vim_lib#sys#Buffer#.getNum
 "" }}}
 function s:Test.testGetNum() " {{{
   let l:obj = s:Buffer.new(bufnr('%'))
@@ -66,7 +66,7 @@ endfunction " }}}
 " delete {{{
 "" {{{
 " Должен удалять буфер.
-" @covers vim_lib#base#Buffer#.delete
+" @covers vim_lib#sys#Buffer#.delete
 "" }}}
 function s:Test.testDelete() " {{{
   let l:bufCount = bufnr('$')
@@ -78,7 +78,7 @@ endfunction " }}}
 " active, gactive, vactive {{{
 "" {{{
 " Должен делать вызываемый буфер активным в текущем окне.
-" @covers vim_lib#base#Buffer#.active
+" @covers vim_lib#sys#Buffer#.active
 "" }}}
 function s:Test.testActive() " {{{
   let l:obj = s:Buffer.new(bufnr('%'))
@@ -92,7 +92,7 @@ endfunction " }}}
 
 "" {{{
 " Должен делать вызываемый буфер активным в новом, горизонтальном окне.
-" @covers vim_lib#base#Buffer#.gactive
+" @covers vim_lib#sys#Buffer#.gactive
 "" }}}
 function s:Test.testGactive_openNewHorizontalWin() " {{{
   let l:winCount = winnr('$')
@@ -104,7 +104,7 @@ endfunction " }}}
 
 "" {{{
 " Должен автоматически удалять временный буфер, создаваемый при открытии нового окна.
-" @covers vim_lib#base#Buffer#.gactive
+" @covers vim_lib#sys#Buffer#.gactive
 "" }}}
 function s:Test.testGactive_delTmpBuffer() " {{{
   let l:bufCount = bufnr('$')
@@ -116,7 +116,7 @@ endfunction " }}}
 
 "" {{{
 " Должен делать вызываемый буфер активным в новом, вертикальном окне.
-" @covers vim_lib#base#Buffer#.vactive
+" @covers vim_lib#sys#Buffer#.vactive
 "" }}}
 function s:Test.testVactive_openNewVerticalWin() " {{{
   let l:winCount = winnr('$')
@@ -128,7 +128,7 @@ endfunction " }}}
 
 "" {{{
 " Должен автоматически удалять временный буфер, создаваемый при открытии нового окна.
-" @covers vim_lib#base#Buffer#.vactive
+" @covers vim_lib#sys#Buffer#.vactive
 "" }}}
 function s:Test.testVactive_delTmpBuffer() " {{{
   let l:bufCount = bufnr('$')
@@ -141,7 +141,7 @@ endfunction " }}}
 " option {{{
 "" {{{
 " Должен делать вызываемый буфер активным в текущем окне.
-" @covers vim_lib#base#Buffer#.option
+" @covers vim_lib#sys#Buffer#.option
 "" }}}
 function s:Test.testOption() " {{{
   let l:currentBuf = s:Buffer.new(bufnr('%'))
@@ -158,20 +158,20 @@ endfunction " }}}
 " listen, ignore {{{
 "" {{{
 " Должен устанавливать привязку при активации буфера.
-" @covers vim_lib#base#Buffer#.listen
+" @covers vim_lib#sys#Buffer#.listen
 "" }}}
 function s:Test.testListen() " {{{
   let l:obj = s:Buffer.new()
   call l:obj.listen('n', 'q', 'test')
   call self.assertEquals(l:obj.listeners, {'n': {'q': 'test'}})
   call l:obj.gactive()
-  call self.assertExec('nnoremap q', "\n\n" . 'n  q           *@:call vim_lib#base#Buffer#.new(bufnr("%")).test()<CR>:echo ""<CR>')
+  call self.assertExec('nnoremap <buffer> q', "\n\n" . 'n  q           *@:call vim_lib#sys#Buffer#.new(bufnr("%")).test()<CR>:echo ""<CR>')
   call l:obj.delete()
 endfunction " }}}
 
 "" {{{
 " Должен удалять ранее созданную привязку.
-" @covers vim_lib#base#Buffer#.ignore
+" @covers vim_lib#sys#Buffer#.ignore
 "" }}}
 function s:Test.testIgnore() " {{{
   let l:obj = s:Buffer.new()
@@ -179,7 +179,7 @@ function s:Test.testIgnore() " {{{
   call l:obj.ignore('n', 'q')
   call self.assertDictNotHasKey(l:obj.listeners['n'], 'q')
   call l:obj.gactive()
-  call self.assertExec('nnoremap q', "\n\n" . 'Привязки не найдены')
+  call self.assertExec('nnoremap <buffer> q', "\n\n" . 'Привязки не найдены')
   call l:obj.delete()
 endfunction " }}}
 " }}}
