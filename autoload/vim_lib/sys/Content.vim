@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:01:41
-" Last Change: 2015-01-12 20:13:18
+" Last Change: 2015-01-12 21:35:16
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -9,6 +9,14 @@ let s:Object = g:vim_lib#base#Object#
 " Класс представляет содержимое текущего буфера.
 "" }}}
 let s:Class = s:Object.expand()
+
+"" {{{
+" Конструктор всегда возвращает единственный экземпляр данного класса.
+" @return vim_lib#sys#Content# Содержимое текущего буфера.
+"" }}}
+function! s:Class.new() " {{{
+  return self.singleton
+endfunction " }}}
 
 "" {{{
 " Метод возвращает информацию о текущем положении курсора, или устанавливает его.
@@ -47,12 +55,17 @@ function! s:Class.line(num, ...) " {{{
 endfunction " }}}
 
 "" {{{
-" Метод возвращает строку, выделенную в режиме Visual, или заменяет ее на указанную.
-" @param string str [optional] Заменяющая строка. Если параметр не задан, метод возвращает строку, выделенную пользователем в режиме Visual.
-" @return string Строка, выделенная пользователем в режиме Visual или пустая строка, если пользователь ничего не выделил.
+" Метод возвращает строку, выделенную в режиме Visual.
+" @return string Строка (или группа строк с завершающим символом переноса строки), выделенная пользователем в режиме Visual или пустая строка, если пользователь ничего не выделил.
 "" }}}
-function! s:Class.select(...) " {{{
-  
+function! s:Class.select() " {{{
+  let [l:lineStart, l:colStart] = getpos("'<")[1:2]
+  let [l:lineEnd, l:colEnd] = getpos("'>")[1:2]
+  let l:lines = getline(l:lineStart, l:lineEnd)
+  let l:countLines = len(l:lines)
+  let l:lines[l:countLines - 1] = l:lines[l:countLines - 1][ : l:colEnd - 1] " Удаление не выделенных символов с начала
+  let l:lines[0] = l:lines[0][l:colStart - 1 : ] " Удаление не выделенных символов с конца
+  return join(l:lines, "\n")
 endfunction " }}}
 
 "" {{{
@@ -96,5 +109,10 @@ function! s:Class.WORD(...) " {{{
     return expand('<cWORD>')
   endif
 endfunction " }}}
+
+"" {{{
+" @var vim_lib#sys#Content# Единственный экземпляр класса.
+"" }}}
+let s:Class.singleton = s:Class.bless()
 
 let g:vim_lib#sys#Content# = s:Class

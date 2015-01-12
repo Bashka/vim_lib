@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:34:18
-" Last Change: 2015-01-12 19:55:20
+" Last Change: 2015-01-12 21:34:09
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -24,6 +24,16 @@ function! s:Test.afterRun() " {{{
   q!
 endfunction " }}}
 
+" new {{{
+"" {{{
+" Класс является Singleton.
+" @covers vim_lib#sys#Content#.new
+"" }}}
+function! s:Test.testNew() " {{{
+  let l:obj = s:Content.new()
+  call self.assertEquals(l:obj, s:Content.new())
+endfunction " }}}
+" }}}
 " pos {{{
 "" {{{
 " Должен устанавливать позицию курсора.
