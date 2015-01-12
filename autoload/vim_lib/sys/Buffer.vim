@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-11 14:47:50
+" Last Change: 2015-01-12 20:57:44
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -74,6 +74,7 @@ endfunction " }}}
 
 "" {{{
 " Метод удаляет вызываемый буфер.
+" При вызове метода, все несохраненные в буфере данные будут потеряны.
 "" }}}
 function! s:Class.delete() " {{{
   exe 'bw! ' . self.getNum()
@@ -147,6 +148,36 @@ function! s:Class.vactive() " {{{
   let l:newBufNum = bufnr('%')
   call self.active()
   exe 'bw! ' . l:newBufNum
+endfunction " }}}
+
+"" {{{
+" Метод возвращает номер окна, в котором активирован буфер.
+" Если буфер активен в более чем одном окне, метод возвращает номер верхнего левого окна.
+" @return integer Номер окна, в котором активирован буфер или -1, если буфер не активен.
+"" }}}
+function! s:Class.getWinNum() " {{{
+  return bufwinnr(self.getNum())
+endfunction " }}}
+
+"" {{{
+" Метод делает окно буфера текущим.
+" Если буфер активен в более чем одном окне, метод делает текущим верхнее левое окно.
+" @throws RuntimeException Выбрасывается в случае, если на момент вызова метода, буфер не был активен.
+"" }}}
+function! s:Class.select() " {{{
+  let l:winNum = bufwinnr(self.getNum())
+  if l:winNum == -1
+    throw 'RuntimeException: Buffer <' . self.getNum() . '> not active.'
+  endif
+  exe l:winNum . 'wincmd w'
+endfunction " }}}
+
+"" {{{
+" Метод закрывает все окна, в котором данный буфер является активным, а так же выгружает его из памяти.
+" При вызове метода, все несохраненные в буфере данные будут потеряны.
+"" }}}
+function! s:Class.unload() " {{{
+  exe 'bunload! ' . self.getNum()
 endfunction " }}}
 
 "" {{{

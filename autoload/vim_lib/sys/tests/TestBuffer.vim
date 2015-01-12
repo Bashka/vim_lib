@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-11 15:56:41
+" Last Change: 2015-01-12 20:51:10
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -192,6 +192,10 @@ function s:Test.testIgnore() " {{{
 endfunction " }}}
 " }}}
 " render {{{
+"" {{{
+" Должен добавлять содержимое буфера из строки.
+" @covers vim_lib#sys#Buffer#.render
+"" }}}
 function! s:Test.testRender_setStr() " {{{
   let l:obj = s:Buffer.new()
   call l:obj.option('buftype', 'nofile')
@@ -201,6 +205,10 @@ function! s:Test.testRender_setStr() " {{{
   call l:obj.delete()
 endfunction " }}}
 
+"" {{{
+" Должен добавлять содержимое буфера из метода.
+" @covers vim_lib#sys#Buffer#.render
+"" }}}
 function! s:Test.testRender_setMethod() " {{{
   let l:obj = s:Buffer.new()
   call l:obj.option('buftype', 'nofile')
@@ -209,6 +217,55 @@ function! s:Test.testRender_setMethod() " {{{
   endfunction " }}}
   call l:obj.gactive()
   call self.assertEquals('test', join(getline(0, '$'), ''))
+  call l:obj.delete()
+endfunction " }}}
+" }}}
+" select {{{
+"" {{{
+" Должен делать окно буфера активным.
+" @covers vim_lib#sys#Buffer#.select
+"" }}}
+function! s:Test.testSelect() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.gactive()
+  exe winnr('#') . 'wincmd w'
+  call l:obj.select()
+  call self.assertEquals(bufwinnr(l:obj.getNum()), winnr())
+  call l:obj.delete()
+endfunction " }}}
+
+"" {{{
+" Должен выбрасывать исключение, если буфер не активен.
+" @covers vim_lib#sys#Buffer#.select
+"" }}}
+function! s:Test.testSelect_throwException() " {{{
+  let l:obj = s:Buffer.new()
+  try
+    call l:obj.select()
+    call self.fail('testSelect_throwException', 'Expected exception <RuntimeException> is not thrown.')
+  catch /RuntimeException:.*/
+  endtry
+endfunction " }}}
+" }}}
+" getWinNum {{{
+"" {{{
+" Должен возвращать номер окна, в котором активен буфер.
+" @covers vim_lib#sys#Buffer#.getWinNum
+"" }}}
+function! s:Test.testGetWinNum() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.gactive()
+  call self.assertEquals(l:obj.getWinNum(), bufwinnr(l:obj.getNum()))
+  call l:obj.delete()
+endfunction " }}}
+
+"" {{{
+" Должен возвращать -1, если буфер не активен.
+" @covers vim_lib#sys#Buffer#.getWinNum
+"" }}}
+function! s:Test.testGetWinNum_returnNegative() " {{{
+  let l:obj = s:Buffer.new()
+  call self.assertEquals(l:obj.getWinNum(), -1)
   call l:obj.delete()
 endfunction " }}}
 " }}}
