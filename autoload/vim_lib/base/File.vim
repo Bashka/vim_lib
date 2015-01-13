@@ -1,0 +1,132 @@
+" Date Create: 2015-01-12 23:45:01
+" Last Change: 2015-01-13 14:16:26
+" Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
+" License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
+
+let s:Object = g:vim_lib#base#Object#
+
+let s:Class = s:Object.expand()
+
+"" {{{
+" Конструктор создает объектное представление файла.
+" @param string Относительный адрес файла.
+" @return vim_lib#base#File# Целевой файл.
+"" }}}
+function! s:Class.relative(address) " {{{
+  let l:obj = self.bless()
+  let l:obj.address = fnamemodify(expand('%'), ':p:h') . '/' . a:address
+  return l:obj
+endfunction " }}}
+
+"" {{{
+" Конструктор создает объектное представление файла.
+" @param string Абсолютный адрес файла.
+" @return vim_lib#base#File# Целевой файл.
+"" }}}
+function! s:Class.absolute(address) " {{{
+  let l:obj = self.bless()
+  let l:obj.address = a:address
+  return l:obj
+endfunction " }}}
+
+"" {{{
+" Метод возвращает адрес файла. Адрес каталогов не завершается слешем.
+" @return string Адрес файла.
+"" }}}
+function! s:Class.getAddress() " {{{
+  return self.address
+endfunction " }}}
+
+"" {{{
+" Метод возвращает имя файла.
+" @return string Имя файла.
+"" }}}
+function! s:Class.getName() " {{{
+  return fnamemodify(self.getAddress(), ':t')
+endfunction " }}}
+
+"" {{{
+" Метод возвращает каталог, в котором расположен файл.
+" @return vim_lib#base#File# Родительский каталог файла.
+"" }}}
+function! s:Class.getDir() " {{{
+  return self.class.absolute(fnamemodify(self.getAddress(), ':h'))
+endfunction " }}}
+
+"" {{{
+" Метод создает файл, если он еще не был создан.
+"" }}}
+function! s:Class.createFile() " {{{
+  call writefile([''], self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод создает каталог, если он еще не был создан.
+"" }}}
+function! s:Class.createDir() " {{{
+  if !self.isExists()
+    call mkdir(self.getAddress(), '')
+  endif
+endfunction " }}}
+
+"" {{{
+" Метод удаляет файл.
+"" }}}
+function! s:Class.deleteFile() " {{{
+  call delete(self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод считывает содержимое файла в массив.
+" @return array Массив строк, содержащихся в файле.
+"" }}}
+function! s:Class.read() " {{{
+  return readfile(self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод записывает строку в конец файла.
+" @param string str Записываемая строка.
+"" }}}
+function! s:Class.write(str) " {{{
+  call self.rewrite(add(self.read(), a:str))
+endfunction " }}}
+
+"" {{{
+" Метод перезаписывает содержимое файла.
+" @param array strs Массив строк, записываемых в файл.
+"" }}}
+function! s:Class.rewrite(strs) " {{{
+  call writefile(a:strs, self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод определяет, является ли данный компонент файловой системы файлом.
+" @return bool true - если это файл, иначе - false.
+"" }}}
+function! s:Class.isFile() " {{{
+  return !isdirectory(self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод определяет, является ли данный компонент файловой системы каталогом.
+" @return bool true - если это каталог, иначе - false.
+"" }}}
+function! s:Class.isDir() " {{{
+  return isdirectory(self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод определяет, существует ли данный файл, или файл с данным именем в каталоге.
+" @param string name [optional] Искомый в данном каталоге файл. Если параметр не задан, метод оценивает существование файла вызываемого объекта.
+" @return bool true - если файл существует, иначе - false.
+"" }}}
+function! s:Class.isExists(...) " {{{
+  if exists('a:1')
+    return empty(glob(self.getAddress() . '/' . a:1))? 0 : 1
+  else
+    return empty(glob(self.getAddress()))? 0 : 1
+  endif
+endfunction " }}}
+
+let g:vim_lib#base#File# = s:Class
