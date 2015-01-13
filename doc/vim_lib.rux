@@ -9,10 +9,12 @@
   2.3. List						|vim_lib-base-list|
   2.4. Dict						|vim_lib-base-dict|
   2.5. Test						|vim_lib-base-test|
+  2.6. File						|vim_lib-base-file|
 3. Пакет sys						|vim_lib-sys|
   3.1. Buffer						|vim_lib-sys-buffer|
-  3.2. Plugin						|vim_lib-sys-plugin|
-  3.3. NullPlugin					|vim_lib-sys-nullplugin|
+  3.2. Content						|vim_lib-sys-content|
+  3.3. Plugin						|vim_lib-sys-plugin|
+  3.4. NullPlugin					|vim_lib-sys-nullplugin|
 
 ================================================================================
 1. Описание						*vim_lib-description*
@@ -290,6 +292,20 @@ Object, а так же свойство 'parent', которое ссылает�
 этим, для тестирования одного метода класса часто используется несколько
 тестирующих методов.
 
+2.6. File						*vim_lib-base-file*
+---------
+
+Класс File служит для объектного представления компонентов файловой системы в
+редакторе. Объекты данного класса представляют как файлы, так и каталоге, при
+чем не обязательно существующие в данный момент.
+
+Не смотря на то, что класс является подклассом Object, конструкторов в нем
+два. Это связано с разными схемами инстанциации, а именно:
+
+  - Метод 'absolute' - создание объекта по абсолютному пути к файлу;
+  - Метод 'relative' - создание объекта по относительному пути к файлу. Пусть
+    расчитывается от каталога, в котором расположен использующий класс скрипт.
+
 ================================================================================
 3. Пакет sys						*vim_lib-sys*
 
@@ -404,14 +420,21 @@ Object, а так же свойство 'parent', которое ссылает�
 	let s:buf.render = "system('date')"   " Буфер содержит текущую дату
 	call s:buf.gactive()
 
-3.2. Plugin						*vim_lib-sys-plugin*
+3.2. Content						*vim_lib-sys-content*
 -----------
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
 vero eos et accusam et justo duo dolores et ea rebum.
 
-3.3. NullPlugin						*vim_lib-sys-nullplugin*
+3.3. Plugin						*vim_lib-sys-plugin*
+-----------
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum.
+
+3.4. NullPlugin						*vim_lib-sys-nullplugin*
 ---------------
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod

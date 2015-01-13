@@ -1,5 +1,5 @@
 " Date Create: 2015-01-13 09:00:17
-" Last Change: 2015-01-13 14:21:32
+" Last Change: 2015-01-13 15:23:16
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -9,7 +9,7 @@ let s:Test = vim_lib#base#Test#.expand()
 
 " relative, absolute {{{
 "" {{{
-" Должен сохранять относительный адрес файла.
+" Должен сохранять адрес файла относительно файла текущего буфера.
 " @covers vim_lib#base#File#.relative
 "" }}}
 function! s:Test.testRelative_saveAddress() " {{{

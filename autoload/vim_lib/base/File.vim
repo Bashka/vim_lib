@@ -1,5 +1,5 @@
 " Date Create: 2015-01-12 23:45:01
-" Last Change: 2015-01-13 14:16:26
+" Last Change: 2015-01-13 15:22:39
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -9,7 +9,7 @@ let s:Class = s:Object.expand()
 
 "" {{{
 " Конструктор создает объектное представление файла.
-" @param string Относительный адрес файла.
+" @param string address Относительный адрес файла. Основой адреса является текущий файл редактора.
 " @return vim_lib#base#File# Целевой файл.
 "" }}}
 function! s:Class.relative(address) " {{{
