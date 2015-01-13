@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-01-13 15:23:56
+" Last Change: 2015-01-13 20:36:19
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -161,10 +161,8 @@ endfunction " }}}
 "" {{{
 " Метод регистрирует плагин в системе и восстанавливает систему в начальное состояние.
 " Данный метод необходимо вызвать в конце файла инициализации плагина.
-" @param string plugAddress Абсолютный адрес скрипта плагина, использующего данный метод. Данное значение можно получить с помощью функции expand('<sfile>') в файле инициализации плагина.
 "" }}}
-function! s:Class.reg(plugAddress) " {{{
-  let self.path = fnamemodify(a:plugAddress, ':p:h')
+function! s:Class.reg() " {{{
   " Переопределение локальных опций плагина путем объединения словарей и запись его в глобальный объект имяПлагина#.
   let g:[self.name . '#'] = extend(self, (exists('g:' . self.name . '#'))? g:[self.name . '#'] : {})
   let &l:cpo = self.savecpo

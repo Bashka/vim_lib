@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 15:13:39
-" Last Change: 2015-01-13 15:23:23
+" Last Change: 2015-01-13 20:36:51
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -120,7 +120,7 @@ endfunction " }}}
 function! s:Test.testDef_setOption() " {{{
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
   call l:obj.def('a', 1)
-  call l:obj.reg(expand('<sfile>'))
+  call l:obj.reg()
   call self.assertEquals(l:obj.a, 1)
   unlet g:vim_lib_testPlugin#
 endfunction " }}}
@@ -133,7 +133,7 @@ function! s:Test.testDef_defaulValue() " {{{
   let g:vim_lib_testPlugin# = {'a': 0}
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
   call l:obj.def('a', 1)
-  call l:obj.reg(expand('<sfile>'))
+  call l:obj.reg()
   call self.assertEquals(l:obj.a, 0)
   unlet g:vim_lib_testPlugin#
 endfunction " }}}
@@ -147,7 +147,7 @@ function! s:Test.testReg() " {{{
   let g:vim_lib_testPlugin# = {'a': 0}
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
   call l:obj.def('a', 1)
-  call l:obj.reg(expand('<sfile>'))
+  call l:obj.reg()
   call self.assertEquals(l:obj.a, 0)
   unlet g:vim_lib_testPlugin#
 endfunction " }}}
