@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:34:18
-" Last Change: 2015-01-16 19:21:46
+" Last Change: 2015-01-16 23:59:46
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -166,10 +166,36 @@ function! s:Test.testWORD_setWord() " {{{
 endfunction " }}}
 " }}}
 " rewrite {{{
+"" {{{
+" Должен перезаписывать содержимое буфера.
+" @covers vim_lib#sys#Content#.rewrite
+"" }}}
 function! s:Test.testRewrite() " {{{
   let l:obj = s:Content.new()
   call l:obj.rewrite('Hello')
   call self.assertEquals(l:obj.line(1), 'Hello')
+endfunction " }}}
+" }}}
+" isEmpty {{{
+"" {{{
+" Должен возвращать 1, когда буфер пуст, иначе - 0.
+" @covers vim_lib#sys#Content#.isEmpty
+"" }}}
+function! s:Test.testIsEmpty() " {{{
+  let l:obj = s:Content.new()
+  call self.assertFalse(l:obj.isEmpty())
+  call l:obj.rewrite('')
+  call self.assertTrue(l:obj.isEmpty())
+endfunction " }}}
+" }}}
+" countLine {{{
+"" {{{
+" Должен определять число строк в текущем буфере.
+" @covers vim_lib#sys#Content#.countLine
+"" }}}
+function! s:Test.testCountLine() " {{{
+  let l:obj = s:Content.new()
+  call self.assertEquals(l:obj.countLine(), 2)
 endfunction " }}}
 " }}}
 

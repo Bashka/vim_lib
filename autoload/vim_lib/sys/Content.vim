@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:01:41
-" Last Change: 2015-01-16 19:21:22
+" Last Change: 2015-01-16 23:59:43
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -118,6 +118,22 @@ function! s:Class.rewrite(str) " {{{
   normal ggVGd
   exe "silent put = '" . a:str . "'"
   keepjumps 0d
+endfunction " }}}
+
+"" {{{
+" Метод определяет, пуст ли текущий буфер.
+" @return bool 1 - если буфер пуст, иначе - 0.
+"" }}}
+function! s:Class.isEmpty() " {{{
+  return (self.countLine() == 1 && self.line(1) == '')
+endfunction " }}}
+
+"" {{{
+" Метод возвращает количество строк в текущем буфере.
+" @return integer Количество строк в текущем буфере.
+"" }}}
+function! s:Class.countLine() " {{{
+  return line('$')
 endfunction " }}}
 
 "" {{{
