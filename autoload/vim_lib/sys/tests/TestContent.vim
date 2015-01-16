@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:34:18
-" Last Change: 2015-01-12 21:34:09
+" Last Change: 2015-01-16 19:21:46
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -163,6 +163,13 @@ function! s:Test.testWORD_setWord() " {{{
   call setpos('.', [bufnr('%'), 1, 5, 0])
   call l:obj.WORD('Test') " Курсор в конце слова
   call self.assertEquals(expand('<cWORD>'), 'Test')
+endfunction " }}}
+" }}}
+" rewrite {{{
+function! s:Test.testRewrite() " {{{
+  let l:obj = s:Content.new()
+  call l:obj.rewrite('Hello')
+  call self.assertEquals(l:obj.line(1), 'Hello')
 endfunction " }}}
 " }}}
 

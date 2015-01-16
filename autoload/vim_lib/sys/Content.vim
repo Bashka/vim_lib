@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:01:41
-" Last Change: 2015-01-12 21:35:16
+" Last Change: 2015-01-16 19:21:22
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -108,6 +108,16 @@ function! s:Class.WORD(...) " {{{
   else
     return expand('<cWORD>')
   endif
+endfunction " }}}
+
+"" {{{
+" Метод записывает в качестве содержимого текущего буфера данную строку.
+" @param string str Новое содержимое.
+"" }}}
+function! s:Class.rewrite(str) " {{{
+  normal ggVGd
+  exe "silent put = '" . a:str . "'"
+  keepjumps 0d
 endfunction " }}}
 
 "" {{{
