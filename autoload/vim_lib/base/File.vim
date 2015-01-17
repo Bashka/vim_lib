@@ -1,11 +1,16 @@
 " Date Create: 2015-01-12 23:45:01
-" Last Change: 2015-01-17 22:12:27
+" Last Change: 2015-01-17 22:15:39
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
 
 let s:Class = s:Object.expand()
+
+"" {{{
+" @var string Переменная хранит слеш, используемый в данной операционной системе.
+"" }}}
+let s:Class.slash = (has('win16') || has('win32') || has('win64') || has('win95'))? '\\' : '/'
 
 "" {{{
 " Конструктор создает объектное представление файла.
@@ -130,8 +135,3 @@ function! s:Class.isExists(...) " {{{
 endfunction " }}}
 
 let g:vim_lib#base#File# = s:Class
-
-"" {{{
-" @var string Переменная хранит слеш, используемый в данной операционной системе.
-"" }}}
-let g:vim_lib#base#File#slash = (has('win16') || has('win32') || has('win64') || has('win95'))? '\\' : '/'
