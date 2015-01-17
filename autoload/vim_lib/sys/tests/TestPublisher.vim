@@ -1,5 +1,5 @@
 " Date Create: 2015-01-16 19:34:14
-" Last Change: 2015-01-16 20:47:17
+" Last Change: 2015-01-17 11:54:23
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 14:35:46
-" Last Change: 2015-01-09 19:49:06
+" Last Change: 2015-01-17 18:37:58
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -28,6 +28,9 @@ endfunction " }}}
 
 function! s:Class.reg() " {{{
   let g:[self.name . '#'] = self
+endfunction " }}}
+
+function! s:Class.run() " {{{
 endfunction " }}}
 
 let g:vim_lib#sys#NullPlugin# = s:Class

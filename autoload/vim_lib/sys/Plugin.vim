@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-01-13 20:36:19
+" Last Change: 2015-01-17 18:37:44
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -165,7 +165,14 @@ endfunction " }}}
 function! s:Class.reg() " {{{
   " Переопределение локальных опций плагина путем объединения словарей и запись его в глобальный объект имяПлагина#.
   let g:[self.name . '#'] = extend(self, (exists('g:' . self.name . '#'))? g:[self.name . '#'] : {})
+  call self.run()
   let &l:cpo = self.savecpo
+endfunction " }}}
+
+"" {{{
+" Данный метод может быть переопределен конкретным плагином с целью реализации логики.
+"" }}}
+function! s:Class.run() " {{{
 endfunction " }}}
 
 let g:vim_lib#sys#Plugin# = s:Class
