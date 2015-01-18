@@ -1,5 +1,5 @@
 " Date Create: 2015-01-13 09:00:17
-" Last Change: 2015-01-13 15:23:16
+" Last Change: 2015-01-18 15:31:19
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -57,6 +57,16 @@ function! s:Test.testGetDir_returnParentDir() " {{{
   call self.assertTrue(l:obj.getDir().class.typeof(s:File))
   let l:obj = s:File.relative('File/dir/dir/file.txt')
   call self.assertEquals(l:obj.getDir().getAddress(), fnamemodify(expand('%'), ':p:h') . '/' . 'File/dir/dir')
+endfunction " }}}
+" }}}
+" getChild {{{
+"" {{{
+" Должен возвращать дочерний файл.
+" @covers vim_lib#base#File#.getChild
+"" }}}
+function! s:Test.testGetChild() " {{{
+  let l:obj = s:File.relative('File/dir').getChild('file.txt')
+  call self.assertEquals(l:obj.getAddress(), fnamemodify(expand('%'), ':p:h') . '/' . 'File/dir/file.txt')
 endfunction " }}}
 " }}}
 " isExists, isFile, isDir {{{

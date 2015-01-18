@@ -1,5 +1,5 @@
 " Date Create: 2015-01-12 23:45:01
-" Last Change: 2015-01-17 22:15:39
+" Last Change: 2015-01-18 15:31:00
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -56,6 +56,15 @@ endfunction " }}}
 "" }}}
 function! s:Class.getDir() " {{{
   return self.class.absolute(fnamemodify(self.getAddress(), ':h'))
+endfunction " }}}
+
+"" {{{
+" Метод возвращает файл, предположительно содержащийся в данном каталоге.
+" @param string name Имя целевого файла.
+" @return vim_lib#base#File# Целевой файл.
+"" }}}
+function! s:Class.getChild(name) " {{{
+  return self.class.absolute(self.getAddress() . self.class.slash . a:name)
 endfunction " }}}
 
 "" {{{
