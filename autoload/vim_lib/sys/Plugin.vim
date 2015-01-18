@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-01-17 18:37:44
+" Last Change: 2015-01-18 11:19:53
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -32,6 +32,7 @@ function! s:Class.__verifyDep(dep) " {{{
   if has_key(a:dep, 'plugins') && !self.__verifyPlugs(a:dep['plugins'])
     return 0
   endif
+  return 1
 endfunction " }}}
 
 function! s:Class.__verifyVersion(assertVersion) " {{{
