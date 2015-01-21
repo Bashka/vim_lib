@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-12 21:20:42
+" Last Change: 2015-01-22 00:02:52
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -188,6 +188,13 @@ endfunction " }}}
 "" }}}
 function! s:Class.option(name, value) " {{{
   let self.options[a:name] = a:value
+endfunction " }}}
+
+"" {{{
+" Метод делает буфер временным устанавливая опцию buftype в значение nofile.
+"" }}}
+function! s:Class.temp() " {{{
+  call self.option('buftype', 'nofile')
 endfunction " }}}
 
 "" {{{
