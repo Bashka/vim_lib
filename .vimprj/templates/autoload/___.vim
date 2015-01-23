@@ -13,4 +13,4 @@ function! s:Class.new() " {{{
   return l:obj
 endfunction " }}}
 
-let g:`substitute(strpart(g:vim_template#keywords.dir, stridx(g:vim_template#keywords.dir, '/') + 1), '/', '#', 'g') . '#' . g:vim_template#keywords.fname . '#'` = s:Test
+let g:`substitute(strpart(g:vim_template#keywords.dir, stridx(g:vim_template#keywords.dir, '/') + 1), '/', '#', 'g') . '#' . g:vim_template#keywords.fname . '#'` = s:Class

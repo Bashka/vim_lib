@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-01-18 11:19:53
+" Last Change: 2015-01-23 09:20:45
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -135,8 +135,8 @@ endfunction " }}}
 "" {{{
 " Метод определяет команды редактора, создаваемые плагином.
 " При выполнении этих команд будут вызываться методы плагина, определенные в его интерфейсе. Так, команда вида:
-"   call s:p.comm('MyPlugComm', 'methodA')
-" выполнит метод 'MyPluginComm#methodA'.
+"   call s:p.comm('MyPlugComm', 'method')
+" выполнит метод 'MyPlugin#method'.
 " Команды не будут созданы, если плагин отключен.
 " @param string command Команда.
 " @param string method Имя метода, являющегося частью интерфейса плагина.
@@ -149,7 +149,7 @@ endfunction " }}}
 " Метод определяет горячие клавиши, создаваемые плагином.
 " При использовании этих привязок будут вызываться методы плагина, определенные в его интерфейсе. Так, привязка вида:
 "   call s:p.map('n', 'q', 'quit')
-" выполнит метод 'MyPluginComm#quit'.
+" выполнит метод 'MyPlugin#quit'.
 " Привязки не будут созданы, если плагин отключен.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой создается привязка.
@@ -157,6 +157,20 @@ endfunction " }}}
 "" }}}
 function! s:Class.map(mode, sequence, method) " {{{
   exe a:mode . 'noremap ' . a:sequence . ' :call ' . self.getName() . '#' . a:method . '()<CR>'
+endfunction " }}}
+
+"" {{{
+" Метод определяет обработчик события редактора.
+" При возникновении этих событий будут вызываться методы плагина, определенные в его интерфейсе. Так, событие вида:
+"   call s:p.au('VimEnter', '*', 'method')
+" выполнит метод 'MyPlugin#method'.
+" Обработчики не будут созданы, если плагин отключен.
+" @param string event Событие редактора (|autocmd-events|).
+" @param string template Шаблон, используемый для определения типа файла.
+" @param string method Имя метода, являющегося частью интерфейса плагина.
+"" }}}
+function! s:Class.au(event, template, method) " {{{
+  exe 'au ' . a:event . ' ' . a:template . ' call ' . self.getName() . '#' . a:method . '()'
 endfunction " }}}
 
 "" {{{
