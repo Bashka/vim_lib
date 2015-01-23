@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-22 00:02:52
+" Last Change: 2015-01-23 09:56:49
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -160,10 +160,15 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
+" @param string pos Позиция нового окна (t - выше текущего окна, b - ниже текущего окна).
+" @param integer gsize [optional] Высота нового окна.
 " @see vim_lib#sys#Buffer#.active
 "" }}}
-function! s:Class.gactive() " {{{
-  silent! new
+function! s:Class.gactive(pos, ...) " {{{
+  exe 'silent! ' . ((a:pos == 'b')? 'rightbelow' : 'leftabove') . ' new'
+  if exists('a:1')
+    exe 'resize ' . a:1
+  endif
   let l:newBufNum = bufnr('%')
   call self.active()
   exe 'bw! ' . l:newBufNum
@@ -171,10 +176,15 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
+" @param string pos Позиция нового окна (l - слева от текущего окна, r - справа от текущего окна).
+" @param integer vsize [optional] Ширина нового окна.
 " @see vim_lib#sys#Buffer#.active
 "" }}}
-function! s:Class.vactive() " {{{
-  silent! vnew
+function! s:Class.vactive(pos, ...) " {{{
+  exe 'silent! ' . ((a:pos == 'r')? 'rightb' : 'lefta') . ' vnew'
+  if exists('a:1')
+    exe 'vertical resize ' . a:1
+  endif
   let l:newBufNum = bufnr('%')
   call self.active()
   exe 'bw! ' . l:newBufNum

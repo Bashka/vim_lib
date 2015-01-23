@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-22 00:04:44
+" Last Change: 2015-01-23 10:00:28
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -105,7 +105,7 @@ endfunction " }}}
 function s:Test.testGactive_openNewHorizontalWin() " {{{
   let l:winCount = winnr('$')
   let l:obj = s:Buffer.new(bufnr('%'))
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertTrue(winnr('$') > l:winCount)
   exe 'q'
 endfunction " }}}
@@ -117,8 +117,20 @@ endfunction " }}}
 function s:Test.testGactive_delTmpBuffer() " {{{
   let l:bufCount = bufnr('$')
   let l:obj = s:Buffer.new(bufnr('%'))
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertTrue(bufnr('$') == l:bufCount)
+  exe 'q'
+endfunction " }}}
+
+"" {{{
+" Должен устанавливать высоту нового окна.
+" @covers vim_lib#sys#Buffer#.gactive
+"" }}}
+function! s:Test.testGactive_resize() " {{{
+  let l:winCount = winnr('$')
+  let l:obj = s:Buffer.new(bufnr('%'))
+  call l:obj.gactive('t', 20)
+  call self.assertEquals(winheight(0), 20)
   exe 'q'
 endfunction " }}}
 
@@ -129,7 +141,7 @@ endfunction " }}}
 function s:Test.testVactive_openNewVerticalWin() " {{{
   let l:winCount = winnr('$')
   let l:obj = s:Buffer.new(bufnr('%'))
-  call l:obj.vactive()
+  call l:obj.vactive('l')
   call self.assertTrue(winnr('$') > l:winCount)
   exe 'q'
 endfunction " }}}
@@ -141,8 +153,20 @@ endfunction " }}}
 function s:Test.testVactive_delTmpBuffer() " {{{
   let l:bufCount = bufnr('$')
   let l:obj = s:Buffer.new(bufnr('%'))
-  call l:obj.vactive()
+  call l:obj.vactive('l')
   call self.assertTrue(bufnr('$') == l:bufCount)
+  exe 'q'
+endfunction " }}}
+
+"" {{{
+" Должен устанавливать ширину нового окна.
+" @covers vim_lib#sys#Buffer#.vactive
+"" }}}
+function! s:Test.testVactive_resize() " {{{
+  let l:winCount = winnr('$')
+  let l:obj = s:Buffer.new(bufnr('%'))
+  call l:obj.vactive('l', 20)
+  call self.assertEquals(winwidth(0), 20)
   exe 'q'
 endfunction " }}}
 " }}}
@@ -155,7 +179,7 @@ function s:Test.testOption() " {{{
   let l:currentBuf = s:Buffer.new(bufnr('%'))
   let l:obj = s:Buffer.new()
   call l:obj.option('filetype', 'test')
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertEquals(&l:filetype, 'test') " Опции устанавливаются после активации в новом окне.
   call l:currentBuf.active()
   call l:obj.active()
@@ -171,7 +195,7 @@ function! s:Test.testTemp() " {{{
   let l:currentBuf = s:Buffer.new(bufnr('%'))
   let l:obj = s:Buffer.new()
   call l:obj.temp()
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertEquals(&l:buftype, 'nofile')
   call l:obj.delete()
 endfunction " }}}
@@ -185,7 +209,7 @@ function s:Test.testListen() " {{{
   let l:obj = s:Buffer.new()
   call l:obj.listen('n', 'q', 'test')
   call self.assertEquals(l:obj.listeners, {'n': {'q': 'test'}})
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertExec('nnoremap <buffer> q', "\n\n" . 'n  q           *@:call vim_lib#sys#Buffer#.new(bufnr("%")).test()<CR>:echo ""<CR>')
   call l:obj.delete()
 endfunction " }}}
@@ -199,7 +223,7 @@ function s:Test.testIgnore() " {{{
   call l:obj.listen('n', 'q', 'test')
   call l:obj.ignore('n', 'q')
   call self.assertDictNotHasKey(l:obj.listeners['n'], 'q')
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertExec('nnoremap <buffer> q', "\n\n" . 'Привязки не найдены')
   call l:obj.delete()
 endfunction " }}}
@@ -213,7 +237,7 @@ function! s:Test.testRender_setStr() " {{{
   let l:obj = s:Buffer.new()
   call l:obj.option('buftype', 'nofile')
   let l:obj.render = "'test'"
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertEquals('test', join(getline(0, '$'), ''))
   call l:obj.delete()
 endfunction " }}}
@@ -228,7 +252,7 @@ function! s:Test.testRender_setMethod() " {{{
   function! l:obj.render() " {{{
     return 'test'
   endfunction " }}}
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertEquals('test', join(getline(0, '$'), ''))
   call l:obj.delete()
 endfunction " }}}
@@ -240,7 +264,7 @@ endfunction " }}}
 "" }}}
 function! s:Test.testSelect() " {{{
   let l:obj = s:Buffer.new()
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   exe winnr('#') . 'wincmd w'
   call l:obj.select()
   call self.assertEquals(bufwinnr(l:obj.getNum()), winnr())
@@ -267,7 +291,7 @@ endfunction " }}}
 "" }}}
 function! s:Test.testGetWinNum() " {{{
   let l:obj = s:Buffer.new()
-  call l:obj.gactive()
+  call l:obj.gactive('t')
   call self.assertEquals(l:obj.getWinNum(), bufwinnr(l:obj.getNum()))
   call l:obj.delete()
 endfunction " }}}
