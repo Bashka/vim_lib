@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-23 09:56:49
+" Last Change: 2015-01-27 10:49:15
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -32,14 +32,20 @@ function! s:Class.new(...) " {{{
   "" }}}
   let l:obj.number = 0
   if exists('a:1')
-    " Обращение к существующему буферу. {{{
-    if !bufexists(a:1)
-      throw 'IndexOutOfRangeException: Buffer <' . a:1 . '> not found.'
+    if type(a:1) == 0
+      " Обращение к существующему буферу. {{{
+      if !bufexists(a:1)
+        throw 'IndexOutOfRangeException: Buffer <' . a:1 . '> not found.'
+      endif
+      let l:obj.number = a:1
+      " }}}
+    else
+      " Создание нового, именованного буфера. {{{
+      let l:obj.number = bufnr('#' . a:1 . '#', 1)
+      " }}}
     endif
-    let l:obj.number = a:1
-    " }}}
   else
-    " Создание нового буфера. {{{
+    " Создание нового, анонимного буфера. {{{
     let l:obj.number = bufnr(bufnr('$') + 1, 1)
     " }}}
   endif
@@ -165,9 +171,14 @@ endfunction " }}}
 " @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.gactive(pos, ...) " {{{
+  let l:winheight = winheight(winnr())
   exe 'silent! ' . ((a:pos == 'b')? 'rightbelow' : 'leftabove') . ' new'
   if exists('a:1')
-    exe 'resize ' . a:1
+    if a:1[-1 : ] == '%'
+      exe 'resize ' . (l:winheight * a:1[0 : -2] / 100)
+    else
+      exe 'resize ' . a:1
+    endif
   endif
   let l:newBufNum = bufnr('%')
   call self.active()
@@ -181,9 +192,14 @@ endfunction " }}}
 " @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.vactive(pos, ...) " {{{
+  let l:winwidth = winwidth(winnr())
   exe 'silent! ' . ((a:pos == 'r')? 'rightb' : 'lefta') . ' vnew'
   if exists('a:1')
-    exe 'vertical resize ' . a:1
+    if a:1[-1 : ] == '%'
+      exe 'vertical resize ' . (l:winwidth * a:1[0 : -2] / 100)
+    else
+      exe 'vertical resize ' . a:1
+    endif
   endif
   let l:newBufNum = bufnr('%')
   call self.active()

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-23 10:00:28
+" Last Change: 2015-01-27 10:39:15
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -30,7 +30,7 @@ function s:Test.testNew_throwOutOfRange() " {{{
 endfunction " }}}
 
 "" {{{
-" Должен создавать новый пустой буфер.
+" Если параметр не указан, должен создавать новый, анонимный буфер.
 " @covers vim_lib#sys#Buffer#.new
 "" }}}
 function s:Test.testNew_createBuffer() " {{{
@@ -38,6 +38,28 @@ function s:Test.testNew_createBuffer() " {{{
   let l:obj = s:Buffer.new()
   call self.assertTrue(bufnr('$') > l:bufCount)
   exe 'bw! ' . l:obj.getNum()
+endfunction " }}}
+
+"" {{{
+" Если параметр текстовый, должен создавать новый, именованный буфер.
+" @covers vim_lib#sys#Buffer#.new
+"" }}}
+function! s:Test.testNew_createBufferOnName() " {{{
+  let l:bufCount = bufnr('$')
+  let l:obj = s:Buffer.new('TestBuffer')
+  call self.assertTrue(bufnr('$') > l:bufCount)
+  exe 'bw! ' . l:obj.getNum()
+endfunction " }}}
+
+"" {{{
+" Если параметр текстовый и буфер с таким именем уже существует, должен возвращать его.
+" @covers vim_lib#sys#Buffer#.new
+"" }}}
+function! s:Test.testNew_returtNamedBuffer() " {{{
+  let l:objA = s:Buffer.new('TestBuffer')
+  let l:objB = s:Buffer.new('TestBuffer')
+  call self.assertEquals(l:objA.getNum(), l:objB.getNum())
+  exe 'bw! ' . l:objA.getNum()
 endfunction " }}}
 
 "" {{{
