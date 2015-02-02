@@ -1,9 +1,10 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-01-27 10:49:15
+" Last Change: 2015-02-02 23:33:58
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
+let s:EventHandle = g:vim_lib#base#EventHandle#
 
 "" {{{
 " Класс представляет буфер редактора.
@@ -13,6 +14,7 @@ let s:Class = s:Object.expand()
 " @var hash Объектный пул, хранящий все экземпляры данного класса. Используется для исключения возможности создания двух объектов с одним номером буфера.
 "" }}}
 let s:Class.buffers = {}
+call s:Class.mix(s:EventHandle)
 
 "" {{{
 " Конструктор создает объектное представление буфера.
@@ -54,9 +56,9 @@ function! s:Class.new(...) " {{{
   "" }}}
   let l:obj.options = {}
   "" {{{
-  " @var hash Словарь привязок, применяемых к буферу при его активации. Словарь имеет следующую структуру: [режим: [комбинация: метод], ...].
+  " @var hash Словарь команд, применяемых к буферу при его активации, генерирующих события привязок. Словарь имеет следующую структуру: {режимКомбинация: командаГенерацииСобытия, ...}.
   "" }}}
-  let l:obj.listeners = {}
+  let l:obj.listenerComm = {}
   let self.buffers[l:obj.getNum()] = l:obj
   return l:obj
 endfunction " }}}
@@ -120,11 +122,8 @@ function! s:Class._setOptions() " {{{
   endif
   " }}}
   " Слушатели. {{{
-  for l:mode in keys(self.listeners)
-    for [l:sequence, l:listener] in items(self.listeners[l:mode])
-      " Завершающий команду вывод пустой строки позволяет отчистить статусбар.
-      exe l:mode . 'noremap <buffer> ' . l:sequence . ' :call vim_lib#sys#Buffer#.new(bufnr("%")).' . l:listener . '()<CR>:echo ""<CR>'
-    endfor
+  for l:listenerComm in values(self.listenerComm)
+    exe l:listenerComm
   endfor
   " }}}
   " Опции. {{{
@@ -223,6 +222,8 @@ function! s:Class.temp() " {{{
   call self.option('buftype', 'nofile')
 endfunction " }}}
 
+" Метод listen примеси EventHandle выносится в закрытую область класса.
+let s:Class._listen = s:Class.listen
 "" {{{
 " Метод определяет функцию-обработчик (слушатель) для события клавиатуры.
 " Слушатель должен быть методом данного буфера.
@@ -231,21 +232,25 @@ endfunction " }}}
 " @param string listener Имя метода вызываемого буфера, используемого в качестве функции-обработчика.
 "" }}}
 function! s:Class.listen(mode, sequence, listener) " {{{
-  if !has_key(self.listeners, a:mode)                                                                                                                  
-    let self.listeners[a:mode] = {}
-  endif
-  let self.listeners[a:mode][a:sequence] = a:listener
+  call self._listen('keyPress_' . a:mode . a:sequence, a:listener)
+  let self.listenerComm[a:mode . a:sequence] = a:mode . 'noremap <buffer> ' . a:sequence . ' :call vim_lib#sys#Buffer#.current().fire("keyPress_' . a:mode . a:sequence . '")<CR>:echo ""<CR>'
 endfunction " }}}
 
+" Метод ignore примеси EventHandle выносится в закрытую область класса.
+let s:Class._ignore = s:Class.ignore
 "" {{{
 " Метод удаляет функции-обработчики (слушатели) для события клавиатуры.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой удаляется привязка.
+" @param string listener [optional] Имя удаляемой функции-слушателя. Если параметр не задан, удаляются все слушатели данной комбинации клавишь.
 "" }}}
-function! s:Class.ignore(mode, sequence) " {{{
-  if has_key(self.listeners, a:mode)
-    if has_key(self.listeners[a:mode], a:sequence) 
-      call remove(self.listeners[a:mode], a:sequence)
+function! s:Class.ignore(mode, sequence, ...) " {{{
+  if exists('a:1')
+    call self._ignore('keyPress_' . a:mode . a:sequence, a:1)
+  else
+    call self._ignore('keyPress_' . a:mode . a:sequence)
+    if has_key(self.listenerComm, a:mode . a:sequence)
+      unlet self.listenerComm[a:mode . a:sequence]
     endif
   endif
 endfunction " }}}

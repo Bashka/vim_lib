@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-01-27 10:39:15
+" Last Change: 2015-02-02 23:32:32
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -227,26 +227,43 @@ endfunction " }}}
 " Должен устанавливать привязку при активации буфера.
 " @covers vim_lib#sys#Buffer#.listen
 "" }}}
-function s:Test.testListen() " {{{
+function s:Test.testListen_setListener() " {{{
   let l:obj = s:Buffer.new()
-  call l:obj.listen('n', 'q', 'test')
-  call self.assertEquals(l:obj.listeners, {'n': {'q': 'test'}})
+  call l:obj.listen('n', 'q', 'testA')
+  call l:obj.listen('n', 'q', 'testB')
+  call self.assertEquals(l:obj.listenerComm, {'nq': 'nnoremap <buffer> q :call vim_lib#sys#Buffer#.current().fire("keyPress_nq")<CR>:echo ""<CR>'})
+  call self.assertEquals(l:obj.listeners, {'keyPress_nq': ['testA', 'testB']})
   call l:obj.gactive('t')
-  call self.assertExec('nnoremap <buffer> q', "\n\n" . 'n  q           *@:call vim_lib#sys#Buffer#.new(bufnr("%")).test()<CR>:echo ""<CR>')
+  call self.assertExec('nnoremap <buffer> q', "\n\n" . 'n  q           *@:call vim_lib#sys#Buffer#.current().fire("keyPress_nq")<CR>:echo ""<CR>')
   call l:obj.delete()
 endfunction " }}}
 
 "" {{{
-" Должен удалять ранее созданную привязку.
+" Должен удалять конкретный обработчик.
 " @covers vim_lib#sys#Buffer#.ignore
 "" }}}
-function s:Test.testIgnore() " {{{
+function s:Test.testIgnore_deleteListener() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.listen('n', 'q', 'testA')
+  call l:obj.listen('n', 'q', 'testA')
+  call l:obj.listen('n', 'q', 'testB')
+  call l:obj.listen('n', 'q', 'testB')
+  call l:obj.ignore('n', 'q', 'testA')
+  call self.assertDictHasKey(l:obj.listenerComm, 'nq')
+  call self.assertEquals(l:obj.listeners, {'keyPress_nq': ['testB', 'testB']})
+endfunction " }}}
+
+"" {{{
+" Должен удалять все привязки.
+" @covers vim_lib#sys#Buffer#.ignore
+"" }}}
+function s:Test.testIgnore_deleteAllListeners() " {{{
   let l:obj = s:Buffer.new()
   call l:obj.listen('n', 'q', 'test')
   call l:obj.ignore('n', 'q')
-  call self.assertDictNotHasKey(l:obj.listeners['n'], 'q')
+  call self.assertDictNotHasKey(l:obj.listenerComm, 'nq')
   call l:obj.gactive('t')
-  call self.assertExec('nnoremap <buffer> q', "\n\n" . 'Привязки не найдены')
+  call self.assertExec('nnoremap <buffer> nq', "\n\n" . 'Привязки не найдены')
   call l:obj.delete()
 endfunction " }}}
 " }}}
