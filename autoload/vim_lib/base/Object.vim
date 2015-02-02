@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:26:24
-" Last Change: 2015-01-11 14:12:02
+" Last Change: 2015-02-02 14:46:56
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -11,6 +11,11 @@
 let s:Class = {}
 
 "" {{{
+" @var hash [optional] Свойства класса, которые будут скопированы в объект данного класса. Конкретные значения свойств могут быть установлены в конструкторе после вызова метода bless.
+"" }}}
+let s:Class.properties = {}
+
+"" {{{
 " Метод создает дочерний по отношению к вызываемому классу класс.
 " Для создаваемого дочернего класса определено статичное свойство parent, ссылающееся на вызываемый (родительский класс).
 " Все методы вызываемого (родительского) класса копируются в создаваемый дочерний класс.
@@ -20,11 +25,36 @@ function! s:Class.expand() " {{{
   let l:child = {'parent': self}
   " Перенос ссылок на методы класса в подкласс. {{{
   let l:child.expand = self.expand
+  let l:child.mix = self.mix
   let l:child.new = self.new
   let l:child.bless = self.bless
   let l:child.typeof = self.typeof
   " }}}
   return l:child
+endfunction " }}}
+
+"" {{{
+" Метод добавляет логику примеси в вызываемый класс, копируя все методы и свойства примеси в него.
+" @param vim_lib#base#Object# class Примесь.
+"" }}}
+function! s:Class.mix(class) " {{{
+  " Примесь методов. {{{
+  for l:p in keys(a:class)
+    if type(a:class[l:p]) == 2 && index(['expand', 'mix', 'bless', 'new', 'typeof'], l:p) == -1
+      let self[l:p] = a:class[l:p]
+    endif
+  endfor
+  " }}}
+  " Примесь свойств. {{{
+  if has_key(a:class, 'properties')
+    if !has_key(self, 'properties')
+      let self.properties = {}
+    endif
+    for [l:k, l:v] in items(a:class.properties)
+      let self.properties[l:k] = deepcopy(l:v)
+    endfor
+  endif
+  " }}}
 endfunction " }}}
 
 "" {{{
@@ -38,10 +68,17 @@ function! s:Class.bless(...) " {{{
   let l:obj = {'class': self, 'parent': (exists('a:1'))? a:1 : self.parent.new()}
   " Перенос частных методов из класса в объект. {{{ 
   for l:p in keys(self)
-    if type(self[l:p]) == 2 && index(['expand', 'bless', 'new', 'typeof'], l:p) == -1 && l:p[0:1] != '__'
+    if type(self[l:p]) == 2 && index(['expand', 'mix', 'bless', 'new', 'typeof'], l:p) == -1 && l:p[0:1] != '__'
       let l:obj[l:p] = self[l:p]
     endif
   endfor
+  " }}}
+  " Перенос свойств из класса в объект. {{{
+  if has_key(self, 'properties')
+    for [l:k, l:v] in items(self.properties)
+      let l:obj[l:k] = deepcopy(l:v)
+    endfor
+  endif
   " }}}
   return l:obj
 endfunction " }}}

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:34:25
-" Last Change: 2015-01-11 15:55:50
+" Last Change: 2015-02-02 14:59:15
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -42,6 +42,29 @@ function s:Test.testExpand_definedSubclass() " {{{
   call self.assertEquals(s:Subsubclass.bless, s:Subclass.bless)
 endfunction " }}}
 " }}}
+" mix {{{
+"" {{{
+" Должен добавлять методы примести в класс.
+" @covers vim_lib#base#Object#.mix
+"" }}}
+function! s:Test.testMix_mixMethods() " {{{
+  call self.assertDictHasKey(s:Parent, 'mixMethod')
+  let s:par = s:Parent.new(0)
+  call self.assertDictHasKey(s:par, 'mixMethod')
+  call self.assertEquals(s:par.mixMethod(), 1)
+endfunction " }}}
+
+"" {{{
+" Должен добавлять свойства примести в класс.
+" @covers vim_lib#base#Object#.mix
+"" }}}
+function! s:Test.testMix_mixMethods() " {{{
+  call self.assertDictHasKey(s:Parent.properties, 'mixProperty')
+  let s:par = s:Parent.new(0)
+  call self.assertDictHasKey(s:par, 'mixProperty')
+  call self.assertEquals(s:par.mixProperty, 1)
+endfunction " }}}
+" }}}
 " bless {{{
 "" {{{
 " Должен создавать неинициализированный экземпляр класса со свойствами parent и class.
@@ -49,7 +72,7 @@ endfunction " }}}
 "" }}}
 function s:Test.testBless_createObject() " {{{
   let s:par = s:Parent.bless()
-  call self.assertEquals(s:par.parent, s:obj)
+  call self.assertEquals(s:par.parent.class, s:Object)
   call self.assertEquals(s:par.class, s:Parent)
 endfunction " }}}
 
@@ -71,6 +94,15 @@ endfunction " }}}
 function s:Test.testBless_copyMethods() " {{{
   let s:par = s:Parent.bless()
   call self.assertDictHasKey(s:par, 'modificArray')
+endfunction " }}}
+
+"" {{{
+" Должен копировать свойства класса из properties в объект.
+" @covers vim_lib#base#Object#.bless
+"" }}}
+function! s:Test.testBless_copyProperties() " {{{
+  let s:par = s:Parent.bless()
+  call self.assertEquals(s:par.property, 1)
 endfunction " }}}
 
 "" {{{
