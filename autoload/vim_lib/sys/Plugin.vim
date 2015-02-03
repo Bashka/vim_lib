@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-03 10:51:46
+" Last Change: 2015-02-03 13:55:17
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -126,7 +126,6 @@ endfunction " }}}
 "   call s:p.comm('MyPlugComm', 'method()')
 " выполнит метод 'MyPlugin#method'.
 " Важно помнить, что в качестве имени метода необходимо указывать имя целевого метода с завершающими круглыми скобками. Это позволяет указать параметры метода при его вызове.
-" Для переопределения команд плагина можно использовать словарь: имяПлагина#commands, который имеет следующую структуру: {команда: метод, ...}.
 " Команды не будут созданы, если плагин отключен.
 " @param string command Команда.
 " @param string method Имя метода, являющегося частью интерфейса плагина.
@@ -179,14 +178,10 @@ function! s:Class.reg() " {{{
     unlet g:[self.name . '#options']
   endif
   " }}}
-  " Переопределение и установка команд плагина. {{{
-  let self.commands = extend(self.commands, (exists('g:' . self.name . '#commands'))? g:[self.name . '#commands'] : {})
+  " Установка команд плагина. {{{
   for [l:comm, l:method] in items(self.commands)
     exe 'command! -nargs=? ' . l:comm . ' call ' . self.getName() . '#' . l:method
   endfor
-  if exists('g:' . self.name . '#commands')
-    unlet g:[self.name . '#commands']
-  endif
   " }}}
   " Переопределение и установка привязок плагина. {{{
   let self.keyListeners = extend(self.keyListeners, (exists('g:' . self.name . '#map'))? g:[self.name . '#map'] : {})
