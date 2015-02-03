@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-02 23:33:58
+" Last Change: 2015-02-03 09:10:38
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -253,6 +253,17 @@ function! s:Class.ignore(mode, sequence, ...) " {{{
       unlet self.listenerComm[a:mode . a:sequence]
     endif
   endif
+endfunction " }}}
+
+" Метод fire примеси EventHandle выносится в закрытую область класса.
+let s:Class._fire = s:Class.fire
+"" {{{
+" Метод генерирует событие клавиатуры для данного буфера.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string sequence Комбинация клавишь, для которой генерируется событие нажатия.
+"" }}}
+function! s:Class.fire(mode, sequence) " {{{
+  call self._fire('keyPress_' . a:mode . a:sequence)
 endfunction " }}}
 
 let g:vim_lib#sys#Buffer# = s:Class

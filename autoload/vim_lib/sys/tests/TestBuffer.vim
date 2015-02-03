@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-02-02 23:32:32
+" Last Change: 2015-02-03 09:13:37
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -222,7 +222,7 @@ function! s:Test.testTemp() " {{{
   call l:obj.delete()
 endfunction " }}}
 " }}}
-" listen, ignore {{{
+" listen, ignore, fire {{{
 "" {{{
 " Должен устанавливать привязку при активации буфера.
 " @covers vim_lib#sys#Buffer#.listen
@@ -264,6 +264,24 @@ function s:Test.testIgnore_deleteAllListeners() " {{{
   call self.assertDictNotHasKey(l:obj.listenerComm, 'nq')
   call l:obj.gactive('t')
   call self.assertExec('nnoremap <buffer> nq', "\n\n" . 'Привязки не найдены')
+  call l:obj.delete()
+endfunction " }}}
+
+"" {{{
+" Должен генерировать события.
+" @covers vim_lib#sys#Buffer#.fire
+"" }}}
+function! s:Test.testFire() " {{{
+  let l:obj = s:Buffer.new()
+  let l:obj.x = 0
+  function! l:obj.inc(...) " {{{
+    let self.x += 1
+  endfunction " }}}
+  call l:obj.listen('n', 'q', 'inc')
+  call l:obj.listen('n', 'q', 'inc')
+  call l:obj.gactive('t')
+  call l:obj.fire('n', 'q')
+  call self.assertEquals(l:obj.x, 2)
   call l:obj.delete()
 endfunction " }}}
 " }}}
