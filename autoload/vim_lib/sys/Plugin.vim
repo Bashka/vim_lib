@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-03 13:55:17
+" Last Change: 2015-02-03 14:01:41
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -102,14 +102,6 @@ endfunction " }}}
 "" }}}
 function! s:Class.getName() " {{{
   return self.name
-endfunction " }}}
-
-"" {{{
-" Метод возвращает адрес каталога плагина.
-" @return string Адрес каталога плагина.
-"" }}}
-function! s:Class.getPath() " {{{
-  return self.path
 endfunction " }}}
 
 "" {{{
