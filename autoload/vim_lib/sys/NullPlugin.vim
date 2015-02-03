@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 14:35:46
-" Last Change: 2015-01-17 18:37:58
+" Last Change: 2015-02-03 10:46:12
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -17,13 +17,13 @@ function! s:Class.getName() " {{{
   return self.name
 endfunction " }}}
 
-function! s:Class.def(option, value) " {{{
-endfunction " }}}
-
 function! s:Class.comm(command, method) " {{{
 endfunction " }}}
 
 function! s:Class.map(mode, sequence, method) " {{{
+endfunction " }}}
+
+function! s:Class.au(event, template, method) " {{{
 endfunction " }}}
 
 function! s:Class.reg() " {{{

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 15:13:39
-" Last Change: 2015-01-13 20:36:51
+" Last Change: 2015-02-03 10:29:28
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -112,43 +112,64 @@ function! s:Test.testGetVersion() " {{{
   call self.assertEquals(l:obj.getVersion(), '1')
 endfunction " }}}
 " }}}
-" def {{{
+" comm, map {{{
 "" {{{
-" Должен устанавливать опции по умолчанию.
-" @covers vim_lib#base#Plugin#.def
+" Должен устанавливать команду плагина.
+" @covers vim_lib#base#Plugin#.comm
 "" }}}
-function! s:Test.testDef_setOption() " {{{
+function! s:Test.testComm() " {{{
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
-  call l:obj.def('a', 1)
-  call l:obj.reg()
-  call self.assertEquals(l:obj.a, 1)
-  unlet g:vim_lib_testPlugin#
+  call l:obj.comm('testComm', 'testMethod')
+  call self.assertEquals(l:obj.commands, {'testComm': 'testMethod'})
 endfunction " }}}
 
 "" {{{
-" Не должен переопределять опцию, если она уже определена.
-" @covers vim_lib#base#Plugin#.def
+" Должен устанавливать привязку плагина.
+" @covers vim_lib#base#Plugin#.map
 "" }}}
-function! s:Test.testDef_defaulValue() " {{{
-  let g:vim_lib_testPlugin# = {'a': 0}
+function! s:Test.testMap() " {{{
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
-  call l:obj.def('a', 1)
-  call l:obj.reg()
-  call self.assertEquals(l:obj.a, 0)
-  unlet g:vim_lib_testPlugin#
+  call l:obj.map('n', 'q', 'testMethod')
+  call self.assertEquals(l:obj.keyListeners, {'n': {'q': 'testMethod'}})
 endfunction " }}}
 " }}}
 " reg {{{
 "" {{{
-" Должен инициализировать предопределенные опции.
+" Должен переопределять опции плагина.
 " @covers vim_lib#base#Plugin#.reg
 "" }}}
-function! s:Test.testReg() " {{{
-  let g:vim_lib_testPlugin# = {'a': 0}
+function! s:Test.testReg_resetOptions() " {{{
+  let g:vim_lib_testPlugin#options = {'a': 0}
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
-  call l:obj.def('a', 1)
+  let l:obj.a = 1
   call l:obj.reg()
   call self.assertEquals(l:obj.a, 0)
+  unlet g:vim_lib_testPlugin#
+endfunction " }}}
+
+"" {{{
+" Должен переопределять команды плагина.
+" @covers vim_lib#base#Plugin#.reg
+"" }}}
+function! s:Test.testReg_resetCommands() " {{{
+  let g:vim_lib_testPlugin#commands = {'TestComm': 'testMethodA'}
+  let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
+  call l:obj.comm('TestComm', 'testMethodB')
+  call l:obj.reg()
+  call self.assertEquals(l:obj.commands, {'TestComm': 'testMethodA'})
+  unlet g:vim_lib_testPlugin#
+endfunction " }}}
+
+"" {{{
+" Должен переопределять привязки плагина.
+" @covers vim_lib#base#Plugin#.reg
+"" }}}
+function! s:Test.testReg_resetKeyListeners() " {{{
+  let g:vim_lib_testPlugin#map = {'n': {'q': 'testMethodA'}}
+  let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
+  call l:obj.map('n', 'q', 'testMethodB')
+  call l:obj.reg()
+  call self.assertEquals(l:obj.keyListeners, {'n': {'q': 'testMethodA'}})
   unlet g:vim_lib_testPlugin#
 endfunction " }}}
 " }}}

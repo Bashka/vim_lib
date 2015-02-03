@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-01-23 09:20:45
+" Last Change: 2015-02-03 10:51:46
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -78,8 +78,8 @@ function! s:Class.new(name, version, ...) " {{{
     return self.plugins[a:name]
   endif
   " }}}
-  let self.currentModule = a:name
-  if exists('g:' . a:name . '#') && type(g:[a:name . '#']) == 0
+  let self.currentModule = a:name " Свойство используется методом __verifyDep для определения имени верифицируемого плагина до его создания
+  if exists('g:' . a:name . '#') && g:[a:name . '#'] == 0
     return s:NullPlugin.new(a:name)
   endif
   if exists('a:1') && !self.__verifyDep(a:1)
@@ -88,6 +88,8 @@ function! s:Class.new(name, version, ...) " {{{
   let l:obj = self.bless()
   let l:obj.name = a:name
   let l:obj.version = a:version
+  let l:obj.commands = {}
+  let l:obj.keyListeners = {}
   let l:obj.savecpo = &l:cpo
   let self.plugins[a:name] = l:obj
   set cpo&vim
@@ -119,44 +121,37 @@ function! s:Class.getVersion() " {{{
 endfunction " }}}
 
 "" {{{
-" Метод определяет начальное значение свойства плагина. Он может применяться для определения свойств плагина по умолчанию.
-" Переопределить свойства плагина можно двумя способами:
-" 1. Если плагин еще не был загружен (на пример для файла '.vimrc' или скриптов каталога 'plugin'), можно определить словарь 'имяПлагина#', элементы которого определят значения опций плагина. На пример так:
-"   let myPlugin# = {'a': 1}
-" 2. Если плагин уже был загружен (на пример для скриптов каталога 'ftplugin'), можно непосредственно переопределить свойства объекта плагина, на пример так:
-"   let myPlugin#.a = 1
-" @param string option Имя свойства.
-" @param mixed value Значение по умолчанию для данного свойства.
-"" }}}
-function! s:Class.def(option, value) " {{{
-  let self[a:option] = a:value
-endfunction " }}}
-
-"" {{{
 " Метод определяет команды редактора, создаваемые плагином.
 " При выполнении этих команд будут вызываться методы плагина, определенные в его интерфейсе. Так, команда вида:
-"   call s:p.comm('MyPlugComm', 'method')
+"   call s:p.comm('MyPlugComm', 'method()')
 " выполнит метод 'MyPlugin#method'.
+" Важно помнить, что в качестве имени метода необходимо указывать имя целевого метода с завершающими круглыми скобками. Это позволяет указать параметры метода при его вызове.
+" Для переопределения команд плагина можно использовать словарь: имяПлагина#commands, который имеет следующую структуру: {команда: метод, ...}.
 " Команды не будут созданы, если плагин отключен.
 " @param string command Команда.
 " @param string method Имя метода, являющегося частью интерфейса плагина.
 "" }}}
 function! s:Class.comm(command, method) " {{{
-  exe 'command! -nargs=? ' . a:command . ' call ' . self.getName() . '#' . a:method . '()'
+  let self.commands[a:command] = a:method
 endfunction " }}}
 
 "" {{{
 " Метод определяет горячие клавиши, создаваемые плагином.
 " При использовании этих привязок будут вызываться методы плагина, определенные в его интерфейсе. Так, привязка вида:
-"   call s:p.map('n', 'q', 'quit')
-" выполнит метод 'MyPlugin#quit'.
+"   call s:p.map('n', 'q', 'quit()')
+" выполнит метод 'MyPlugin#quit()'.
+" Важно помнить, что в качестве имени метода необходимо указывать имя целевого метода с завершающими круглыми скобками. Это позволяет указать параметры метода при его вызове.
+" Для переопределения привязок плагина можно использовать словарь: имяПлагина#map, который имеет следующую структуру: {режим: {комбинация: метод}, ...}.
 " Привязки не будут созданы, если плагин отключен.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой создается привязка.
 " @param string method Имя метода, являющегося частью интерфейса плагина.
 "" }}}
 function! s:Class.map(mode, sequence, method) " {{{
-  exe a:mode . 'noremap ' . a:sequence . ' :call ' . self.getName() . '#' . a:method . '()<CR>'
+  if !has_key(self.keyListeners, a:mode)
+    let self.keyListeners[a:mode] = {}
+  endif
+  let self.keyListeners[a:mode][a:sequence] = a:method
 endfunction " }}}
 
 "" {{{
@@ -178,8 +173,32 @@ endfunction " }}}
 " Данный метод необходимо вызвать в конце файла инициализации плагина.
 "" }}}
 function! s:Class.reg() " {{{
-  " Переопределение локальных опций плагина путем объединения словарей и запись его в глобальный объект имяПлагина#.
-  let g:[self.name . '#'] = extend(self, (exists('g:' . self.name . '#'))? g:[self.name . '#'] : {})
+  " Переопределение свойств плагина. {{{
+  let g:[self.name . '#'] = extend(self, (exists('g:' . self.name . '#options'))? g:[self.name . '#options'] : {})
+  if exists('g:' . self.name . '#options')
+    unlet g:[self.name . '#options']
+  endif
+  " }}}
+  " Переопределение и установка команд плагина. {{{
+  let self.commands = extend(self.commands, (exists('g:' . self.name . '#commands'))? g:[self.name . '#commands'] : {})
+  for [l:comm, l:method] in items(self.commands)
+    exe 'command! -nargs=? ' . l:comm . ' call ' . self.getName() . '#' . l:method
+  endfor
+  if exists('g:' . self.name . '#commands')
+    unlet g:[self.name . '#commands']
+  endif
+  " }}}
+  " Переопределение и установка привязок плагина. {{{
+  let self.keyListeners = extend(self.keyListeners, (exists('g:' . self.name . '#map'))? g:[self.name . '#map'] : {})
+  for [l:mode, l:map] in items(self.keyListeners)
+    for [l:sequence, l:method] in items(l:map)
+      exe l:mode . 'noremap ' . l:sequence . ' :call ' . self.getName() . '#' . l:method . '<CR>'
+    endfor
+  endfor
+  if exists('g:' . self.name . '#map')
+    unlet g:[self.name . '#map']
+  endif
+  " }}}
   call self.run()
   let &l:cpo = self.savecpo
 endfunction " }}}
