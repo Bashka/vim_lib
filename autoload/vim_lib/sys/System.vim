@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-04 10:59:44
+" Last Change: 2015-02-04 11:23:03
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -115,13 +115,13 @@ function! s:Class.map(mode, sequence, listen) " {{{
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
+let s:Class._ignore = s:Class.ignore
 "" {{{
 " Метод удаляет функции-обработчики (слушатели) для глобального события клавиатуры.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой удаляется привязка.
 " @param string listener [optional] Имя удаляемой функции-слушателя или ссылка на глобальную функцию. Если параметр не задан, удаляются все слушатели данной комбинации клавишь.
 "" }}}
-let s:Class._ignore = s:Class.ignore
 function! s:Class.ignore(mode, sequence, ...) " {{{
   if exists('a:1')
     call self._ignore('keyPress_' . a:mode . ':' . a:sequence, a:1)
@@ -134,12 +134,12 @@ function! s:Class.ignore(mode, sequence, ...) " {{{
 endfunction " }}}
 
 " Метод fire примеси EventHandle выносится в закрытую область класса.
+let s:Class._fire = s:Class.fire
 "" {{{
 " Метод генерирует глобальное событие клавиатуры.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой генерируется событие нажатия.
 "" }}}
-let s:Class._fire = s:Class.fire
 function! s:Class.fire(mode, event) " {{{
   call self._fire('keyPress_' . a:mode . ':' . a:event)
 endfunction " }}}
