@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-04 12:08:36
+" Last Change: 2015-02-04 12:17:11
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -144,7 +144,6 @@ let s:Class._fire = s:Class.fire
 " @param string sequence Комбинация клавишь, для которой генерируется событие нажатия.
 "" }}}
 function! s:Class.fire(mode, event) " {{{
-  echom a:event
   call self._fire('keyPress_' . a:mode . ':' . a:event)
 endfunction " }}}
 
