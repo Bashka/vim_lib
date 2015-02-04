@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-04 12:06:18
+" Last Change: 2015-02-04 12:55:38
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -236,7 +236,7 @@ function! s:Class.listen(mode, sequence, listener) " {{{
   let l:modSeq = substitute(a:sequence, '<', '\\<', '')
   let l:modSeq = substitute(l:modSeq, '>', '\\>', '')
   call self._listen('keyPress_' . a:mode . a:sequence, a:listener)
-  let self.listenerComm[a:mode . a:sequence] = a:mode . 'noremap <buffer> ' . a:sequence . ' :call vim_lib#sys#Buffer#.current().fire("' . a:mode . '", "' . l:modSeq . '")<CR>:echo ""<CR>'
+  let self.listenerComm[a:mode . a:sequence] = a:mode . 'noremap <silent> <buffer> ' . a:sequence . ' :call vim_lib#sys#Buffer#.current().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
