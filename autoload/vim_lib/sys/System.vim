@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-04 11:23:03
+" Last Change: 2015-02-04 12:08:36
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -110,8 +110,11 @@ let s:Class._listen = s:Class.listen
 " @param string listener Имя метода класса или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
 "" }}}
 function! s:Class.map(mode, sequence, listen) " {{{
+  " Исключаем автоматический перевод комбинаций вида <C-...> в ^... при вызове noremap.
+  let l:modSeq = substitute(a:sequence, '<', '\\<', '')
+  let l:modSeq = substitute(l:modSeq, '>', '\\>', '')
   call self._listen('keyPress_' . a:mode . ':' . a:sequence, a:listen)
-  exe a:mode . 'noremap ' . a:sequence . ' :call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . a:sequence . '")<CR>:echo ""<CR>'
+  exe a:mode . 'noremap ' . a:sequence . ' :call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . l:modSeq . '")<CR>:echo ""<CR>'
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
@@ -141,6 +144,7 @@ let s:Class._fire = s:Class.fire
 " @param string sequence Комбинация клавишь, для которой генерируется событие нажатия.
 "" }}}
 function! s:Class.fire(mode, event) " {{{
+  echom a:event
   call self._fire('keyPress_' . a:mode . ':' . a:event)
 endfunction " }}}
 
