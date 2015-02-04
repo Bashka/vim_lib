@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-04 15:44:13
+" Last Change: 2015-02-04 16:12:55
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -130,19 +130,15 @@ endfunction " }}}
 "" {{{
 " Метод определяет горячие клавиши, создаваемые плагином.
 " При использовании этих привязок будут вызываться методы плагина, определенные в его интерфейсе. Так, привязка вида:
-"   call s:p.map('n', 'q', 'quit')
+"   call s:p.map('q', 'quit')
 " выполнит метод 'MyPlugin#quit'.
-" Для переопределения привязок плагина можно использовать словарь: имяПлагина#map, который имеет следующую структуру: {режим: {комбинация: метод}, ...}.
+" Для переопределения привязок плагина можно использовать словарь: имяПлагина#map, который имеет следующую структуру: {метод: комбинация, ...}.
 " Привязки не будут созданы, если плагин отключен.
-" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой создается привязка.
 " @param string method Имя метода, являющегося частью интерфейса плагина.
 "" }}}
-function! s:Class.map(mode, sequence, method) " {{{
-  if !has_key(self.keyListeners, a:mode)
-    let self.keyListeners[a:mode] = {}
-  endif
-  let self.keyListeners[a:mode][a:sequence] = function(self.getName() . '#' . a:method)
+function! s:Class.map(sequence, method) " {{{
+  let self.keyListeners[a:method] = a:sequence
 endfunction " }}}
 
 "" {{{
@@ -177,10 +173,10 @@ function! s:Class.reg() " {{{
   " }}}
   " Переопределение и установка привязок плагина. {{{
   let self.keyListeners = extend(self.keyListeners, (exists('g:' . self.name . '#map'))? g:[self.name . '#map'] : {})
-  for [l:mode, l:map] in items(self.keyListeners)
-    for [l:sequence, l:Method] in items(l:map)
-      call s:System.map(l:mode, l:sequence, ((type(l:Method) == 2)? l:Method : function(self.name . '#' . l:Method)))
-    endfor
+  for [l:method, l:sequence] in items(self.keyListeners)
+    if l:method != ''
+      call s:System.map('n', l:sequence, function(self.name . '#' . l:method))
+    endif
   endfor
   if exists('g:' . self.name . '#map')
     unlet g:[self.name . '#map']
