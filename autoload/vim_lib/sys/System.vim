@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-04 10:04:49
+" Last Change: 2015-02-04 10:59:44
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -12,9 +12,12 @@ let s:EventHandle = g:vim_lib#base#EventHandle#
 let s:Class = s:Object.expand()
 call s:Class.mix(s:EventHandle)
 
+"" {{{
+" Конструктор всегда возвращает единственный экземпляр данного класса.
+" @return vim_lib#sys#System# Интерфейс системы.
+"" }}}
 function! s:Class.new() " {{{
-  let l:obj = self.bless()
-  return l:obj
+  return self.singleton
 endfunction " }}}
 
 "" {{{
@@ -99,20 +102,51 @@ endfunction " }}}
 
 " Метод listen примеси EventHandle выносится в закрытую область класса.
 let s:Class._listen = s:Class.listen
-function! s:Class.listen(mode, event, listen) " {{{
-  
+"" {{{
+" Метод определяет функцию-обработчик (слушатель) для глобального события клавиатуры.
+" Слушатель должен быть методом вызываемого класса или ссылкой на глобальную функцию.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string sequence Комбинация клавишь, для которой создается привязка.
+" @param string listener Имя метода класса или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
+"" }}}
+function! s:Class.map(mode, sequence, listen) " {{{
+  call self._listen('keyPress_' . a:mode . ':' . a:sequence, a:listen)
+  exe a:mode . 'noremap ' . a:sequence . ' :call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . a:sequence . '")<CR>:echo ""<CR>'
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
+"" {{{
+" Метод удаляет функции-обработчики (слушатели) для глобального события клавиатуры.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string sequence Комбинация клавишь, для которой удаляется привязка.
+" @param string listener [optional] Имя удаляемой функции-слушателя или ссылка на глобальную функцию. Если параметр не задан, удаляются все слушатели данной комбинации клавишь.
+"" }}}
 let s:Class._ignore = s:Class.ignore
-function! s:Class.ignore(mode, event, ...) " {{{
-  
+function! s:Class.ignore(mode, sequence, ...) " {{{
+  if exists('a:1')
+    call self._ignore('keyPress_' . a:mode . ':' . a:sequence, a:1)
+  else
+    call self._ignore('keyPress_' . a:mode . ':' . a:sequence)
+  endif
+  if len(self.listeners['keyPress_' . a:mode . ':' . a:sequence]) == 0
+    exe a:mode . 'unmap ' . a:sequence
+  endif
 endfunction " }}}
 
 " Метод fire примеси EventHandle выносится в закрытую область класса.
+"" {{{
+" Метод генерирует глобальное событие клавиатуры.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string sequence Комбинация клавишь, для которой генерируется событие нажатия.
+"" }}}
 let s:Class._fire = s:Class.fire
 function! s:Class.fire(mode, event) " {{{
-  
+  call self._fire('keyPress_' . a:mode . ':' . a:event)
 endfunction " }}}
+
+"" {{{
+" @var vim_lib#sys#System# Единственный экземпляр класса.
+"" }}}
+let s:Class.singleton = s:Class.bless()
 
 let g:vim_lib#sys#System# = s:Class

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-03 10:58:50
+" Last Change: 2015-02-04 10:59:49
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -226,10 +226,10 @@ endfunction " }}}
 let s:Class._listen = s:Class.listen
 "" {{{
 " Метод определяет функцию-обработчик (слушатель) для события клавиатуры.
-" Слушатель должен быть методом данного буфера.
+" Слушатель должен быть методом данного буфера или ссылкой на глобальную функцию.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
 " @param string sequence Комбинация клавишь, для которой создается привязка.
-" @param string listener Имя метода вызываемого буфера, используемого в качестве функции-обработчика.
+" @param string listener Имя метода вызываемого буфера или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
 "" }}}
 function! s:Class.listen(mode, sequence, listener) " {{{
   call self._listen('keyPress_' . a:mode . a:sequence, a:listener)
