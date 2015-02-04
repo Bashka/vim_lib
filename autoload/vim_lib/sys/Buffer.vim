@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-04 12:55:38
+" Last Change: 2015-02-04 16:35:20
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -224,6 +224,7 @@ endfunction " }}}
 
 " Метод listen примеси EventHandle выносится в закрытую область класса.
 let s:Class._listen = s:Class.listen
+unlet s:Class.listen
 "" {{{
 " Метод определяет функцию-обработчик (слушатель) для события клавиатуры.
 " Слушатель должен быть методом данного буфера или ссылкой на глобальную функцию.
@@ -231,7 +232,7 @@ let s:Class._listen = s:Class.listen
 " @param string sequence Комбинация клавишь, для которой создается привязка.
 " @param string listener Имя метода вызываемого буфера или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
 "" }}}
-function! s:Class.listen(mode, sequence, listener) " {{{
+function! s:Class.map(mode, sequence, listener) " {{{
   " Исключаем автоматический перевод комбинаций вида <C-...> в ^... при вызове noremap.
   let l:modSeq = substitute(a:sequence, '<', '\\<', '')
   let l:modSeq = substitute(l:modSeq, '>', '\\>', '')

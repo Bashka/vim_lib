@@ -1,5 +1,5 @@
 " Date Create: 2015-01-22 19:07:10
-" Last Change: 2015-02-04 11:18:14
+" Last Change: 2015-02-04 16:33:21
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -31,7 +31,7 @@ function! s:Class.push(buffer) " {{{
   function! a:buffer.quit(...) " {{{
     call self.stack.delete()
   endfunction " }}}
-  call a:buffer.listen('n', 'q', 'quit')
+  call a:buffer.map('n', 'q', 'quit')
   call self.stack.push(a:buffer)
 endfunction " }}}
 

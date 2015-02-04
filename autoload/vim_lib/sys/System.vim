@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-04 12:55:08
+" Last Change: 2015-02-04 16:35:31
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -102,6 +102,7 @@ endfunction " }}}
 
 " Метод listen примеси EventHandle выносится в закрытую область класса.
 let s:Class._listen = s:Class.listen
+unlet s:Class.listen
 "" {{{
 " Метод определяет функцию-обработчик (слушатель) для глобального события клавиатуры.
 " Слушатель должен быть методом вызываемого класса или ссылкой на глобальную функцию.
