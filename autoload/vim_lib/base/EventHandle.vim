@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 17:00:19
-" Last Change: 2015-02-02 17:37:46
+" Last Change: 2015-02-04 10:03:45
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -18,10 +18,10 @@ let s:Class.properties.listeners = {}
 
 "" {{{
 " Метод добавляет обработчик события.
-" В качестве обработчика события должен выступать метод вызываемого объекта.
+" В качестве обработчика события должен выступать метод вызываемого объекта или ссылка на глобальную функцию.
 " Позволяется устанавливать несколько обработчиков одного события. В случае наступления события, они будут вызваны в порядке их добавления.
 " @param string event Событие.
-" @param string listener Имя метода-обработчика события.
+" @param string|function listener Имя метода-обработчика события или ссылка на функцию-обработчик события.
 "" }}}
 function! s:Class.listen(event, listener) " {{{
   if !has_key(self.listeners, a:event)
@@ -36,8 +36,12 @@ endfunction " }}}
 "" }}}
 function! s:Class.fire(event) " {{{
   if has_key(self.listeners, a:event)
-    for l:listener in self.listeners[a:event]
-      call call(self[l:listener], [a:event], self)
+    for l:Listener in self.listeners[a:event]
+      if type(l:Listener) == 2
+        call call(l:Listener, [a:event])
+      else
+        call call(self[l:Listener], [a:event], self)
+      endif
     endfor
   endif
 endfunction " }}}
@@ -45,7 +49,7 @@ endfunction " }}}
 "" {{{
 " Метод удаляет обработчик события.
 " @param string event Имя целевого события.
-" @param string listener [optional] Имя обработчика события. Если параметр не задан, удаляются все обработчики данного события.
+" @param string|function listener [optional] Имя метода-обработчика события или ссылка на функцию-обработчик. Если параметр не задан, удаляются все обработчики данного события.
 "" }}}
 function! s:Class.ignore(event, ...) " {{{
   if !exists('a:1')

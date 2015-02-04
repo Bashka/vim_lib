@@ -1,20 +1,37 @@
 " Date Create: 2015-02-02 17:06:46
-" Last Change: 2015-02-02 17:37:52
+" Last Change: 2015-02-04 10:04:17
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Test = vim_lib#base#Test#.expand()
 let s:Mock = vim_lib#base#tests#EventHandle#Mock#
 
+let vim_lib#base#tests#TestEventHandle#var = 0
+function! vim_lib#base#tests#TestEventHandle#funListener(...) " {{{
+  let g:vim_lib#base#tests#TestEventHandle#var += 1
+endfunction " }}}
+
 " listen {{{
 "" {{{
 " Должен сохранять слушателя в словарь обработчиков событий.
 " @covers vim_lib#base#EventHandle#.listen
 "" }}}
-function! s:Test.testListen_saveListener() " {{{
+function! s:Test.testListen_saveMethodListener() " {{{
   let l:obj = s:Mock.new()
   call l:obj.listen('event', 'listener')
   call self.assertEquals(l:obj.listeners['event'][0], 'listener')
+endfunction " }}}
+
+"" {{{
+" Должен сохранять функцию-обработчик в словарь обработчиков событий.
+" @covers vim_lib#base#EventHandle#.listen
+"" }}}
+function! s:Test.testListen_saveFunListener() " {{{
+  let l:obj = s:Mock.new()
+  function! s:Listener() " {{{
+  endfunction " }}}
+  call l:obj.listen('event', function('s:Listener'))
+  call self.assertEquals(l:obj.listeners['event'][0], function('s:Listener'))
 endfunction " }}}
 
 "" {{{
@@ -33,10 +50,10 @@ endfunction " }}}
 " }}}
 " fire {{{
 "" {{{
-" Должен запускать функции-обработчики событий.
+" Должен запускать методы-обработчики события.
 " @covers vim_lib#base#EventHandle#.fire
 "" }}}
-function! s:Test.testFire_runListeners() " {{{
+function! s:Test.testFire_runMethodListeners() " {{{
   let l:obj = s:Mock.new()
   let l:obj.x = 0
   function! l:obj.listener(...) " {{{
@@ -46,6 +63,19 @@ function! s:Test.testFire_runListeners() " {{{
   call l:obj.listen('event', 'listener')
   call l:obj.fire('event')
   call self.assertEquals(l:obj.x, 2)
+endfunction " }}}
+
+"" {{{
+" Должен запускать функции-обработчики события.
+" @covers vim_lib#base#EventHandle#.fire
+"" }}}
+function! s:Test.testFire_runFunListeners() " {{{
+  let l:obj = s:Mock.new()
+  call l:obj.listen('event', function('vim_lib#base#tests#TestEventHandle#funListener'))
+  call l:obj.listen('event', function('vim_lib#base#tests#TestEventHandle#funListener'))
+  call l:obj.fire('event')
+  call self.assertEquals(g:vim_lib#base#tests#TestEventHandle#var, 2)
+  let g:vim_lib#base#tests#TestEventHandle#var = 0
 endfunction " }}}
 " }}}
 " ignore {{{
@@ -64,10 +94,10 @@ function! s:Test.testIgnore_ignoreEvent() " {{{
 endfunction " }}}
 
 "" {{{
-" Должен удалять обработчики с заданым именем.
+" Должен удалять метод-обработчики с заданым именем.
 " @covers vim_lib#base#EventHandle#.ignore
 "" }}}
-function! s:Test.testIgnore_ignoreListener() " {{{
+function! s:Test.testIgnore_ignoreMethodListener() " {{{
   let l:obj = s:Mock.new()
   call l:obj.listen('event', 'listenerA')
   call l:obj.listen('event', 'listenerA')
@@ -75,6 +105,24 @@ function! s:Test.testIgnore_ignoreListener() " {{{
   call l:obj.listen('event', 'listenerB')
   call l:obj.ignore('event', 'listenerA')
   call self.assertEquals(l:obj.listeners.event, ['listenerB', 'listenerB'])
+endfunction " }}}
+
+"" {{{
+" Должен удалять функцию-обработчики с заданым именем.
+" @covers vim_lib#base#EventHandle#.ignore
+"" }}}
+function! s:Test.testIgnore_ignoreFunListener() " {{{
+  let l:obj = s:Mock.new()
+  function! s:ListenerA() " {{{
+  endfunction " }}}
+  function! s:ListenerB() " {{{
+  endfunction " }}}
+  call l:obj.listen('event', function('s:ListenerA'))
+  call l:obj.listen('event', function('s:ListenerA'))
+  call l:obj.listen('event', function('s:ListenerB'))
+  call l:obj.listen('event', function('s:ListenerB'))
+  call l:obj.ignore('event', function('s:ListenerA'))
+  call self.assertEquals(l:obj.listeners.event, [function('s:ListenerB'), function('s:ListenerB')])
 endfunction " }}}
 " }}}
 

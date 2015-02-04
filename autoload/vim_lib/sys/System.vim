@@ -1,14 +1,16 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-02 11:24:21
+" Last Change: 2015-02-04 10:04:49
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
+let s:EventHandle = g:vim_lib#base#EventHandle#
 
 "" {{{
 " Класс представляет интерфейс для взаимодействия с операционной системой и редактором Vim.
 "" }}}
 let s:Class = s:Object.expand()
+call s:Class.mix(s:EventHandle)
 
 function! s:Class.new() " {{{
   let l:obj = self.bless()
@@ -93,6 +95,24 @@ function! s:Class.read(msg, ...) " {{{
   echohl None
   call inputrestore()
   return l:result
+endfunction " }}}
+
+" Метод listen примеси EventHandle выносится в закрытую область класса.
+let s:Class._listen = s:Class.listen
+function! s:Class.listen(mode, event, listen) " {{{
+  
+endfunction " }}}
+
+" Метод ignore примеси EventHandle выносится в закрытую область класса.
+let s:Class._ignore = s:Class.ignore
+function! s:Class.ignore(mode, event, ...) " {{{
+  
+endfunction " }}}
+
+" Метод fire примеси EventHandle выносится в закрытую область класса.
+let s:Class._fire = s:Class.fire
+function! s:Class.fire(mode, event) " {{{
+  
 endfunction " }}}
 
 let g:vim_lib#sys#System# = s:Class
