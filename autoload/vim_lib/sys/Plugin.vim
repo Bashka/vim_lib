@@ -1,10 +1,11 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-03 14:01:41
+" Last Change: 2015-02-04 15:44:13
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
 let s:NullPlugin = g:vim_lib#sys#NullPlugin#
+let s:System = g:vim_lib#sys#System#.new()
 
 "" {{{
 " Объекты данного класса представляют каждый конкретный, подключаемый редактором плагин.
@@ -129,9 +130,8 @@ endfunction " }}}
 "" {{{
 " Метод определяет горячие клавиши, создаваемые плагином.
 " При использовании этих привязок будут вызываться методы плагина, определенные в его интерфейсе. Так, привязка вида:
-"   call s:p.map('n', 'q', 'quit()')
-" выполнит метод 'MyPlugin#quit()'.
-" Важно помнить, что в качестве имени метода необходимо указывать имя целевого метода с завершающими круглыми скобками. Это позволяет указать параметры метода при его вызове.
+"   call s:p.map('n', 'q', 'quit')
+" выполнит метод 'MyPlugin#quit'.
 " Для переопределения привязок плагина можно использовать словарь: имяПлагина#map, который имеет следующую структуру: {режим: {комбинация: метод}, ...}.
 " Привязки не будут созданы, если плагин отключен.
 " @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
@@ -142,7 +142,7 @@ function! s:Class.map(mode, sequence, method) " {{{
   if !has_key(self.keyListeners, a:mode)
     let self.keyListeners[a:mode] = {}
   endif
-  let self.keyListeners[a:mode][a:sequence] = a:method
+  let self.keyListeners[a:mode][a:sequence] = function(self.getName() . '#' . a:method)
 endfunction " }}}
 
 "" {{{
@@ -178,8 +178,8 @@ function! s:Class.reg() " {{{
   " Переопределение и установка привязок плагина. {{{
   let self.keyListeners = extend(self.keyListeners, (exists('g:' . self.name . '#map'))? g:[self.name . '#map'] : {})
   for [l:mode, l:map] in items(self.keyListeners)
-    for [l:sequence, l:method] in items(l:map)
-      exe l:mode . 'noremap ' . l:sequence . ' :call ' . self.getName() . '#' . l:method . '<CR>'
+    for [l:sequence, l:Method] in items(l:map)
+      call s:System.map(l:mode, l:sequence, ((type(l:Method) == 2)? l:Method : function(self.name . '#' . l:Method)))
     endfor
   endfor
   if exists('g:' . self.name . '#map')
