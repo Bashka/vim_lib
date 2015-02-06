@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-04 16:35:20
+" Last Change: 2015-02-06 14:24:57
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -24,8 +24,11 @@ call s:Class.mix(s:EventHandle)
 "" }}}
 function! s:Class.new(...) " {{{
   " Получение объекта из пула. {{{
-  if exists('a:1') && has_key(self.buffers, a:1)
-    return self.buffers[a:1]
+  if exists('a:1')
+    let l:bufnr = (type(a:1) == 1)? bufnr(a:1) : a:1
+    if has_key(self.buffers, l:bufnr)
+      return self.buffers[l:bufnr]
+    endif
   endif
   " }}}
   let l:obj = self.bless()
@@ -165,13 +168,26 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
-" @param string pos Позиция нового окна (t - выше текущего окна, b - ниже текущего окна).
+" @param string pos Позиция нового окна (t - выше текущего окна, b - ниже текущего окна, T - выше всех окон, B - ниже всех окон).
 " @param integer gsize [optional] Высота нового окна.
 " @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.gactive(pos, ...) " {{{
   let l:winheight = winheight(winnr())
-  exe 'silent! ' . ((a:pos == 'b')? 'rightbelow' : 'leftabove') . ' new'
+  " Определение позиции нового окна. {{{
+  if a:pos == 't'
+    let l:pos = 'leftabove'
+  elseif a:pos == 'T'
+    let l:pos = 'topleft'
+  elseif a:pos == 'b'
+    let l:pos = 'rightbelow'
+  elseif a:pos == 'B'
+    let l:pos = 'botright'
+  else
+    let l:pos = ''
+  endif
+  " }}}
+  exe 'silent! ' . l:pos . ' new'
   if exists('a:1')
     if a:1[-1 : ] == '%'
       exe 'resize ' . (l:winheight * a:1[0 : -2] / 100)
@@ -186,13 +202,26 @@ endfunction " }}}
 
 "" {{{
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
-" @param string pos Позиция нового окна (l - слева от текущего окна, r - справа от текущего окна).
+" @param string pos Позиция нового окна (l - слева от текущего окна, r - справа от текущего окна, L - левее всех окон, R - правее всех окон).
 " @param integer vsize [optional] Ширина нового окна.
 " @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.vactive(pos, ...) " {{{
   let l:winwidth = winwidth(winnr())
-  exe 'silent! ' . ((a:pos == 'r')? 'rightb' : 'lefta') . ' vnew'
+  " Определение позиции нового окна. {{{
+  if a:pos == 'l'
+    let l:pos = 'leftabove'
+  elseif a:pos == 'L'
+    let l:pos = 'topleft'
+  elseif a:pos == 'r'
+    let l:pos = 'rightbelow'
+  elseif a:pos == 'R'
+    let l:pos = 'botright'
+  else
+    let l:pos = ''
+  endif
+  " }}}
+  exe 'silent! ' . l:pos . ' vnew'
   if exists('a:1')
     if a:1[-1 : ] == '%'
       exe 'vertical resize ' . (l:winwidth * a:1[0 : -2] / 100)
