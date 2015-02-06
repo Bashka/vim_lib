@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 17:00:19
-" Last Change: 2015-02-04 10:03:45
+" Last Change: 2015-02-06 23:36:03
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -38,9 +38,9 @@ function! s:Class.fire(event) " {{{
   if has_key(self.listeners, a:event)
     for l:Listener in self.listeners[a:event]
       if type(l:Listener) == 2
-        call call(l:Listener, [a:event])
+        call call(l:Listener, [])
       else
-        call call(self[l:Listener], [a:event], self)
+        call call(self[l:Listener], [], self)
       endif
     endfor
   endif

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-04 16:12:55
+" Last Change: 2015-02-06 23:53:35
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -168,7 +168,7 @@ function! s:Class.reg() " {{{
   " }}}
   " Установка команд плагина. {{{
   for [l:comm, l:method] in items(self.commands)
-    exe 'command! -nargs=? ' . l:comm . ' call ' . self.getName() . '#' . l:method
+    exe 'command! -nargs=* ' . l:comm . ' call ' . self.getName() . '#' . l:method
   endfor
   " }}}
   " Переопределение и установка привязок плагина. {{{
