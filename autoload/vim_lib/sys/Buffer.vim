@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-06 14:24:57
+" Last Change: 2015-02-06 16:47:53
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -169,7 +169,7 @@ endfunction " }}}
 "" {{{
 " Метод открывает новое окно по горизонтали и делает вызываемый буфер активным в нем.
 " @param string pos Позиция нового окна (t - выше текущего окна, b - ниже текущего окна, T - выше всех окон, B - ниже всех окон).
-" @param integer gsize [optional] Высота нового окна.
+" @param integer gsize [optional] Высота нового окна. Возможно указать процентное значение (n%) относительно текущего окна.
 " @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.gactive(pos, ...) " {{{
@@ -203,7 +203,7 @@ endfunction " }}}
 "" {{{
 " Метод открывает новое окно по вертикали и делает вызываемый буфер активным в нем.
 " @param string pos Позиция нового окна (l - слева от текущего окна, r - справа от текущего окна, L - левее всех окон, R - правее всех окон).
-" @param integer vsize [optional] Ширина нового окна.
+" @param integer vsize [optional] Ширина нового окна. Возможно указать процентное значение (n%) относительно текущего окна.
 " @see vim_lib#sys#Buffer#.active
 "" }}}
 function! s:Class.vactive(pos, ...) " {{{
