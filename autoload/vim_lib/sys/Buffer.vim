@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-06 16:47:53
+" Last Change: 2015-02-08 10:43:21
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -61,7 +61,11 @@ function! s:Class.new(...) " {{{
   "" {{{
   " @var hash Словарь команд, применяемых к буферу при его активации, генерирующих события привязок. Словарь имеет следующую структуру: {режимКомбинация: командаГенерацииСобытия, ...}.
   "" }}}
-  let l:obj.listenerComm = {}
+  let l:obj.listenerMap = {}
+  "" {{{
+  " @var hash Словарь событий, применяемых к буферу при его активации, генерирующих события привязок. Словарь имеет следующую структуру: {событие: командаГенерацииСобытия, ...}.
+  "" }}}
+  let l:obj.listenerAu = {}
   let self.buffers[l:obj.getNum()] = l:obj
   return l:obj
 endfunction " }}}
@@ -125,8 +129,12 @@ function! s:Class._setOptions() " {{{
   endif
   " }}}
   " Слушатели. {{{
-  for l:listenerComm in values(self.listenerComm)
-    exe l:listenerComm
+  for l:listenerMap in values(self.listenerMap)
+    exe l:listenerMap
+  endfor
+  for l:listenerAu in values(self.listenerAu)
+    echom l:listenerAu
+    exe l:listenerAu
   endfor
   " }}}
   " Опции. {{{
@@ -266,7 +274,18 @@ function! s:Class.map(mode, sequence, listener) " {{{
   let l:modSeq = substitute(a:sequence, '<', '\\<', '')
   let l:modSeq = substitute(l:modSeq, '>', '\\>', '')
   call self._listen('keyPress_' . a:mode . a:sequence, a:listener)
-  let self.listenerComm[a:mode . a:sequence] = a:mode . 'noremap <silent> <buffer> ' . a:sequence . ' :call vim_lib#sys#Buffer#.current().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
+  let self.listenerMap[a:mode . a:sequence] = a:mode . 'noremap <silent> <buffer> ' . a:sequence . ' :call vim_lib#sys#Buffer#.current().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
+endfunction " }}}
+
+"" {{{
+" Метод определяет функцию-обработчик (слушатель) для события редактора.
+" Слушатель должен быть методом данного буфера или ссылкой на глобальную функцию.
+" @param string events Имена событий, перечисленных через запятую, к которым выполняется привязка. Доступно одной из приведенных в разделе |autocommand-events| значений.
+" @param string listener Имя метода вызываемого буфера или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
+"" }}}
+function! s:Class.au(events, listener) " {{{
+  call self._listen('autocmd_' . a:events, a:listener)
+  let self.listenerAu[a:events] = 'au ' . a:events . ' ' . bufname(self.getNum()) . ' :call vim_lib#sys#Buffer#.current().doau("' . a:events . '")'
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
@@ -277,13 +296,29 @@ let s:Class._ignore = s:Class.ignore
 " @param string sequence Комбинация клавишь, для которой удаляется привязка.
 " @param string listener [optional] Имя удаляемой функции-слушателя. Если параметр не задан, удаляются все слушатели данной комбинации клавишь.
 "" }}}
-function! s:Class.ignore(mode, sequence, ...) " {{{
+function! s:Class.ignoreMap(mode, sequence, ...) " {{{
   if exists('a:1')
     call self._ignore('keyPress_' . a:mode . a:sequence, a:1)
   else
     call self._ignore('keyPress_' . a:mode . a:sequence)
-    if has_key(self.listenerComm, a:mode . a:sequence)
-      unlet self.listenerComm[a:mode . a:sequence]
+    if has_key(self.listenerMap, a:mode . a:sequence)
+      unlet self.listenerMap[a:mode . a:sequence]
+    endif
+  endif
+endfunction " }}}
+
+"" {{{
+" Метод удаляет функции-обработчики (слушатели) для события редактора.
+" @param string events Имена событий, перечисленных через запятую, для которым отменяется привязка. Доступно одной из приведенных в разделе |autocommand-events| значений.
+" @param string listener [optional] Имя удаляемой функции-слушателя. Если параметр не задан, удаляются все слушатели данного события редактора.
+"" }}}
+function! s:Class.ignoreAu(events, ...) " {{{
+  if exists('a:1')
+    call self._ignore('autocmd_' . a:events, a:1)
+  else
+    call self._ignore('keyPress_' . a:events)
+    if has_key(self.listenerAu, a:events)
+      unlet self.listenerMap[a:events]
     endif
   endif
 endfunction " }}}
@@ -297,6 +332,14 @@ let s:Class._fire = s:Class.fire
 "" }}}
 function! s:Class.fire(mode, sequence) " {{{
   call self._fire('keyPress_' . a:mode . a:sequence)
+endfunction " }}}
+
+"" {{{
+" Метод генерирует событие редактора для данного буфера.
+" @param string events Имена событий, перечисленных через запятую, для которых выполняется генерация. Доступно одной из приведенных в разделе |autocommand-events| значений.
+"" }}}
+function! s:Class.doau(events) " {{{
+  call self._fire('autocmd_' . a:events)
 endfunction " }}}
 
 let g:vim_lib#sys#Buffer# = s:Class
