@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-08 10:43:21
+" Last Change: 2015-02-08 12:04:18
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -25,7 +25,7 @@ call s:Class.mix(s:EventHandle)
 function! s:Class.new(...) " {{{
   " Получение объекта из пула. {{{
   if exists('a:1')
-    let l:bufnr = (type(a:1) == 1)? bufnr(a:1) : a:1
+    let l:bufnr = (type(a:1) == 1)? bufnr('#' . a:1 . '#') : a:1
     if has_key(self.buffers, l:bufnr)
       return self.buffers[l:bufnr]
     endif
@@ -133,7 +133,6 @@ function! s:Class._setOptions() " {{{
     exe l:listenerMap
   endfor
   for l:listenerAu in values(self.listenerAu)
-    echom l:listenerAu
     exe l:listenerAu
   endfor
   " }}}
@@ -316,10 +315,13 @@ function! s:Class.ignoreAu(events, ...) " {{{
   if exists('a:1')
     call self._ignore('autocmd_' . a:events, a:1)
   else
-    call self._ignore('keyPress_' . a:events)
+    call self._ignore('autocmd_' . a:events)
     if has_key(self.listenerAu, a:events)
-      unlet self.listenerMap[a:events]
+      unlet self.listenerAu[a:events]
     endif
+  endif
+  if len(self.listeners['autocmd_' . a:events]) == 0
+    exe 'au! ' . a:events . ' ' . bufname(self.getNum())
   endif
 endfunction " }}}
 

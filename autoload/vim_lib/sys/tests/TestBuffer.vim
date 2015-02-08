@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-02-03 09:13:37
+" Last Change: 2015-02-08 12:06:46
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -126,7 +126,7 @@ endfunction " }}}
 "" }}}
 function s:Test.testGactive_openNewHorizontalWin() " {{{
   let l:winCount = winnr('$')
-  let l:obj = s:Buffer.new(bufnr('%'))
+  let l:obj = s:Buffer.new()
   call l:obj.gactive('t')
   call self.assertTrue(winnr('$') > l:winCount)
   exe 'q'
@@ -162,7 +162,7 @@ endfunction " }}}
 "" }}}
 function s:Test.testVactive_openNewVerticalWin() " {{{
   let l:winCount = winnr('$')
-  let l:obj = s:Buffer.new(bufnr('%'))
+  let l:obj = s:Buffer.new()
   call l:obj.vactive('l')
   call self.assertTrue(winnr('$') > l:winCount)
   exe 'q'
@@ -222,46 +222,46 @@ function! s:Test.testTemp() " {{{
   call l:obj.delete()
 endfunction " }}}
 " }}}
-" listen, ignore, fire {{{
+" map, ignoreMap, fire {{{
 "" {{{
 " Должен устанавливать привязку при активации буфера.
-" @covers vim_lib#sys#Buffer#.listen
+" @covers vim_lib#sys#Buffer#.map
 "" }}}
-function s:Test.testListen_setListener() " {{{
+function s:Test.testMap_setListener() " {{{
   let l:obj = s:Buffer.new()
-  call l:obj.listen('n', 'q', 'testA')
-  call l:obj.listen('n', 'q', 'testB')
-  call self.assertEquals(l:obj.listenerComm, {'nq': 'nnoremap <buffer> q :call vim_lib#sys#Buffer#.current().fire("keyPress_nq")<CR>:echo ""<CR>'})
+  call l:obj.map('n', 'q', 'testA')
+  call l:obj.map('n', 'q', 'testB')
+  call self.assertEquals(l:obj.listenerMap, {'nq': 'nnoremap <silent> <buffer> q :call vim_lib#sys#Buffer#.current().fire("n", "q")<CR>'})
   call self.assertEquals(l:obj.listeners, {'keyPress_nq': ['testA', 'testB']})
   call l:obj.gactive('t')
-  call self.assertExec('nnoremap <buffer> q', "\n\n" . 'n  q           *@:call vim_lib#sys#Buffer#.current().fire("keyPress_nq")<CR>:echo ""<CR>')
+  call self.assertExec('nnoremap <silent> <buffer> q', "\n\n" . 'n  q           *@:call vim_lib#sys#Buffer#.current().fire("n", "q")<CR>')
   call l:obj.delete()
 endfunction " }}}
 
 "" {{{
 " Должен удалять конкретный обработчик.
-" @covers vim_lib#sys#Buffer#.ignore
+" @covers vim_lib#sys#Buffer#.ignoreMap
 "" }}}
-function s:Test.testIgnore_deleteListener() " {{{
+function s:Test.testIgnoreMap_deleteListener() " {{{
   let l:obj = s:Buffer.new()
-  call l:obj.listen('n', 'q', 'testA')
-  call l:obj.listen('n', 'q', 'testA')
-  call l:obj.listen('n', 'q', 'testB')
-  call l:obj.listen('n', 'q', 'testB')
-  call l:obj.ignore('n', 'q', 'testA')
-  call self.assertDictHasKey(l:obj.listenerComm, 'nq')
+  call l:obj.map('n', 'q', 'testA')
+  call l:obj.map('n', 'q', 'testA')
+  call l:obj.map('n', 'q', 'testB')
+  call l:obj.map('n', 'q', 'testB')
+  call l:obj.ignoreMap('n', 'q', 'testA')
+  call self.assertDictHasKey(l:obj.listenerMap, 'nq')
   call self.assertEquals(l:obj.listeners, {'keyPress_nq': ['testB', 'testB']})
 endfunction " }}}
 
 "" {{{
 " Должен удалять все привязки.
-" @covers vim_lib#sys#Buffer#.ignore
+" @covers vim_lib#sys#Buffer#.ignoreMap
 "" }}}
-function s:Test.testIgnore_deleteAllListeners() " {{{
+function s:Test.testIgnoreMap_deleteAllListeners() " {{{
   let l:obj = s:Buffer.new()
-  call l:obj.listen('n', 'q', 'test')
-  call l:obj.ignore('n', 'q')
-  call self.assertDictNotHasKey(l:obj.listenerComm, 'nq')
+  call l:obj.map('n', 'q', 'test')
+  call l:obj.ignoreMap('n', 'q')
+  call self.assertDictNotHasKey(l:obj.listenerMap, 'nq')
   call l:obj.gactive('t')
   call self.assertExec('nnoremap <buffer> nq', "\n\n" . 'Привязки не найдены')
   call l:obj.delete()
@@ -277,10 +277,73 @@ function! s:Test.testFire() " {{{
   function! l:obj.inc(...) " {{{
     let self.x += 1
   endfunction " }}}
-  call l:obj.listen('n', 'q', 'inc')
-  call l:obj.listen('n', 'q', 'inc')
+  call l:obj.map('n', 'q', 'inc')
+  call l:obj.map('n', 'q', 'inc')
   call l:obj.gactive('t')
   call l:obj.fire('n', 'q')
+  call self.assertEquals(l:obj.x, 2)
+  call l:obj.delete()
+endfunction " }}}
+" }}}
+" au, ignoreAu, doau {{{
+"" {{{
+" Должен устанавливать привязку при активации буфера.
+" @covers vim_lib#sys#Buffer#.au
+"" }}}
+function s:Test.testAu_setListener() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.au('BufEnter', 'testA')
+  call l:obj.au('BufEnter', 'testB')
+  call self.assertEquals(l:obj.listenerAu, {'BufEnter': 'au BufEnter ' . bufname(l:obj.getNum()) . ' :call vim_lib#sys#Buffer#.current().doau("BufEnter")'})
+  call self.assertEquals(l:obj.listeners, {'autocmd_BufEnter': ['testA', 'testB']})
+  call l:obj.gactive('t')
+  call self.assertExec('autocmd BufEnter ' . bufname(l:obj.getNum()), "\n" . '--- Автокоманды ---' . "\n" . 'BufEnter' . "\n" . '    ' . bufname(l:obj.getNum()) . '        :call vim_lib#sys#Buffer#.current().doau("BufEnter")')
+  call l:obj.delete()
+endfunction " }}}
+
+"" {{{
+" Должен удалять конкретный обработчик.
+" @covers vim_lib#sys#Buffer#.ignoreAu
+"" }}}
+function s:Test.testIgnoreAu_deleteListener() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.au('BufEnter', 'testA')
+  call l:obj.au('BufEnter', 'testA')
+  call l:obj.au('BufEnter', 'testB')
+  call l:obj.au('BufEnter', 'testB')
+  call l:obj.ignoreAu('BufEnter', 'testA')
+  call self.assertDictHasKey(l:obj.listenerAu, 'BufEnter')
+  call self.assertEquals(l:obj.listeners, {'autocmd_BufEnter': ['testB', 'testB']})
+endfunction " }}}
+
+"" {{{
+" Должен удалять все привязки.
+" @covers vim_lib#sys#Buffer#.ignoreAu
+"" }}}
+function s:Test.testIgnoreAu_deleteAllListeners() " {{{
+  let l:obj = s:Buffer.new()
+  call l:obj.au('BufEnter', 'test')
+  call l:obj.ignoreAu('BufEnter')
+  call self.assertDictNotHasKey(l:obj.listenerAu, 'BufEnter')
+  call l:obj.gactive('t')
+  call self.assertExec('autocmd BufEnter ' . bufname(l:obj.getNum()), "\n" . '--- Автокоманды ---')
+  call l:obj.delete()
+endfunction " }}}
+
+"" {{{
+" Должен генерировать события.
+" @covers vim_lib#sys#Buffer#.doau
+"" }}}
+function! s:Test.testDoau() " {{{
+  let l:obj = s:Buffer.new()
+  let l:obj.x = 0
+  function! l:obj.inc(...) " {{{
+    let self.x += 1
+  endfunction " }}}
+  call l:obj.au('BufEnter', 'inc')
+  call l:obj.au('BufEnter', 'inc')
+  call l:obj.gactive('t')
+  call l:obj.doau('BufEnter')
   call self.assertEquals(l:obj.x, 2)
   call l:obj.delete()
 endfunction " }}}
