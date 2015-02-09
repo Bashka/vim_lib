@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-09 17:16:38
+" Last Change: 2015-02-09 17:28:25
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -102,23 +102,13 @@ endfunction " }}}
 
 "" {{{
 " Метод запрашивает подтверждение у пользователя.
-" Подтверждением запроса является ввод: y, Y, yes или пустая строка.
+" Подтверждением запроса является ввод: Y или пустая строка.
 " @param string msg Заголовок запроса.
-" @param string color [optional] Цвет заголовка.
 " @return bool true - если пользователь подтвердил запрос, иначе - false.
 "" }}}
-function! s:Class.confirm(msg, ...) " {{{
-  if exists('a:1')
-    let l:result = self.read(a:msg, a:1)
-  else
-    let l:result = self.read(a:msg)
-  endif
-  if l:result == 'y' || l:result == 'Y' || l:result == 'yes' || l:result == ''
-    echo (l:result == '')? 'yes' : "\n" " Добавление переноса строки после ввода подтверждения.
-    return 1
-  else
-    return 0
-  endif
+function! s:Class.confirm(msg) " {{{
+  let l:result = confirm(a:msg, "&Yes\n&no")
+  return !(l:result == 0 || l:result == 2)
 endfunction " }}}
 
 " Метод listen примеси EventHandle выносится в закрытую область класса.
