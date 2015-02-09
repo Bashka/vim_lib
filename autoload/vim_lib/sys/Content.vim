@@ -1,5 +1,5 @@
 " Date Create: 2015-01-11 21:01:41
-" Last Change: 2015-01-16 23:59:43
+" Last Change: 2015-02-09 23:02:22
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -35,7 +35,7 @@ endfunction " }}}
 "" {{{
 " Метод добавляет строку в указанную позицию, сдвигая остальные строки вниз.
 " @param integer num Номер целевой строки.
-" @param string str Вставляемая строка.
+" @param string|array str Вставляемая строка или массив строк.
 "" }}}
 function! s:Class.add(num, str) " {{{
   call append(a:num - 1, a:str)
