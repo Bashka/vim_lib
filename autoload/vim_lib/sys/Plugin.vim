@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-06 23:53:35
+" Last Change: 2015-02-09 00:46:46
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -80,7 +80,7 @@ function! s:Class.new(name, version, ...) " {{{
   endif
   " }}}
   let self.currentModule = a:name " Свойство используется методом __verifyDep для определения имени верифицируемого плагина до его создания
-  if exists('g:' . a:name . '#') && g:[a:name . '#'] == 0
+  if exists('g:' . a:name . '#') && type(g:[a:name . '#']) == 0
     return s:NullPlugin.new(a:name)
   endif
   if exists('a:1') && !self.__verifyDep(a:1)

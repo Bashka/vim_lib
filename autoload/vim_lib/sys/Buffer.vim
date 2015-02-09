@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-08 12:04:18
+" Last Change: 2015-02-09 14:53:39
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -18,14 +18,14 @@ call s:Class.mix(s:EventHandle)
 
 "" {{{
 " Конструктор создает объектное представление буфера.
-" @param integer number Номер целевого буфера. Если параметр не задан, создается новый буфер.
+" @param integer|string name Номер целевого буфера или имя файла, используемого для редактирования в буфере. Если параметр не задан, создается новый буфер.
 " @throws IndexOutOfRangeException Выбрасывается при обращении к отсутствующему буферу.
 " @return vim_lib#sys#Buffer# Целевой буфер.
 "" }}}
 function! s:Class.new(...) " {{{
   " Получение объекта из пула. {{{
   if exists('a:1')
-    let l:bufnr = (type(a:1) == 1)? bufnr('#' . a:1 . '#') : a:1
+    let l:bufnr = (type(a:1) == 1)? bufnr(a:1) : a:1
     if has_key(self.buffers, l:bufnr)
       return self.buffers[l:bufnr]
     endif
@@ -46,7 +46,7 @@ function! s:Class.new(...) " {{{
       " }}}
     else
       " Создание нового, именованного буфера. {{{
-      let l:obj.number = bufnr('#' . a:1 . '#', 1)
+      let l:obj.number = bufnr(a:1, 1)
       " }}}
     endif
   else

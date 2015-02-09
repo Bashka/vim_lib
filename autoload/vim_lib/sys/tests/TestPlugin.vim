@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 15:13:39
-" Last Change: 2015-02-03 10:29:28
+" Last Change: 2015-02-09 00:48:13
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -129,8 +129,8 @@ endfunction " }}}
 "" }}}
 function! s:Test.testMap() " {{{
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
-  call l:obj.map('n', 'q', 'testMethod')
-  call self.assertEquals(l:obj.keyListeners, {'n': {'q': 'testMethod'}})
+  call l:obj.map('q', 'testMethod')
+  call self.assertEquals(l:obj.keyListeners, {'testMethod': 'q'})
 endfunction " }}}
 " }}}
 " reg {{{
@@ -148,28 +148,15 @@ function! s:Test.testReg_resetOptions() " {{{
 endfunction " }}}
 
 "" {{{
-" Должен переопределять команды плагина.
-" @covers vim_lib#base#Plugin#.reg
-"" }}}
-function! s:Test.testReg_resetCommands() " {{{
-  let g:vim_lib_testPlugin#commands = {'TestComm': 'testMethodA'}
-  let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
-  call l:obj.comm('TestComm', 'testMethodB')
-  call l:obj.reg()
-  call self.assertEquals(l:obj.commands, {'TestComm': 'testMethodA'})
-  unlet g:vim_lib_testPlugin#
-endfunction " }}}
-
-"" {{{
 " Должен переопределять привязки плагина.
 " @covers vim_lib#base#Plugin#.reg
 "" }}}
 function! s:Test.testReg_resetKeyListeners() " {{{
-  let g:vim_lib_testPlugin#map = {'n': {'q': 'testMethodA'}}
+  let g:vim_lib_testPlugin#map = {'testMethodA': 'a'}
   let l:obj = s:Plugin.new('vim_lib_testPlugin', '1')
-  call l:obj.map('n', 'q', 'testMethodB')
+  call l:obj.map('q', 'testMethodA')
   call l:obj.reg()
-  call self.assertEquals(l:obj.keyListeners, {'n': {'q': 'testMethodA'}})
+  call self.assertEquals(l:obj.keyListeners, {'testMethodA': 'a'})
   unlet g:vim_lib_testPlugin#
 endfunction " }}}
 " }}}

@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 15:58:24
-" Last Change: 2015-02-08 12:06:46
+" Last Change: 2015-02-09 14:55:07
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -46,7 +46,7 @@ endfunction " }}}
 "" }}}
 function! s:Test.testNew_createBufferOnName() " {{{
   let l:bufCount = bufnr('$')
-  let l:obj = s:Buffer.new('TestBuffer')
+  let l:obj = s:Buffer.new('#TestBuffer#')
   call self.assertTrue(bufnr('$') > l:bufCount)
   exe 'bw! ' . l:obj.getNum()
 endfunction " }}}
@@ -56,8 +56,8 @@ endfunction " }}}
 " @covers vim_lib#sys#Buffer#.new
 "" }}}
 function! s:Test.testNew_returtNamedBuffer() " {{{
-  let l:objA = s:Buffer.new('TestBuffer')
-  let l:objB = s:Buffer.new('TestBuffer')
+  let l:objA = s:Buffer.new('#TestBuffer#')
+  let l:objB = s:Buffer.new('#TestBuffer#')
   call self.assertEquals(l:objA.getNum(), l:objB.getNum())
   exe 'bw! ' . l:objA.getNum()
 endfunction " }}}
