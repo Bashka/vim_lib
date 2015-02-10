@@ -1,5 +1,5 @@
 " Date Create: 2015-01-22 19:07:10
-" Last Change: 2015-02-06 23:40:12
+" Last Change: 2015-02-10 10:55:58
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -23,7 +23,7 @@ endfunction " }}}
 
 "" {{{
 " Метод добавляет буфер в стек, но не активирует его.
-" Метод добавляет привязку к клавише q для добавляемого буфера так, чтобы по нажатии этой клавиши, текущий буфер закрывался и автоматически активировался предыдущий.
+" Метод добавляет привязку к клавише "^y" для добавляемого буфера так, чтобы по нажатии этой клавиши, текущий буфер закрывался и автоматически активировался предыдущий.
 " @param vim_lib#sys#Buffer# buffer Добавляемый буфер.
 "" }}}
 function! s:Class.push(buffer) " {{{
@@ -52,6 +52,12 @@ function! s:Class.delete() " {{{
     call self.active()
   endif
   call s:currBuffer.delete()
+endfunction " }}}
+
+function! s:Class.clear(num) " {{{
+  while self.stack.length() > a:num
+    call self.delete()
+  endwhile
 endfunction " }}}
 
 "" {{{
