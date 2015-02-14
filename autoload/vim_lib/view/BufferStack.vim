@@ -1,5 +1,5 @@
 " Date Create: 2015-01-22 19:07:10
-" Last Change: 2015-02-10 10:55:58
+" Last Change: 2015-02-10 16:33:47
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -54,6 +54,10 @@ function! s:Class.delete() " {{{
   call s:currBuffer.delete()
 endfunction " }}}
 
+"" {{{
+" Метод удаляет все буферы в стеке до указанного.
+" @param integer num Номер буфера, до которого будут сохранен стек.
+"" }}}
 function! s:Class.clear(num) " {{{
   while self.stack.length() > a:num
     call self.delete()
