@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-09 00:46:46
+" Last Change: 2015-02-15 15:41:40
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -21,6 +21,9 @@ let s:System = g:vim_lib#sys#System#.new()
 "   endfunction
 "" }}}
 let s:Class = s:Object.expand()
+"" {{{
+" @var hash Словарь инициализированных плагинов. Словарь имеет следующую структуру: {имя: объектПлагина, ...}
+"" }}}
 let s:Class.plugins = {}
 
 function! s:Class.__verifyDep(dep) " {{{
