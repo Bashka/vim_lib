@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-09 17:28:25
+" Last Change: 2015-02-15 16:08:27
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -136,8 +136,10 @@ endfunction " }}}
 " @param string listener Имя метода класса или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
 "" }}}
 function! s:Class.au(events, listen) " {{{
+  if !has_key(self.listeners, 'autocmd_' . a:events)
+    exe 'au ' . a:events . ' * :call vim_lib#sys#System#.new().doau("' . a:events . '")'
+  endif
   call self._listen('autocmd_' . a:events, a:listen)
-  exe 'au ' . a:events . ' * :call vim_lib#sys#System#.new().doau("' . a:events . '")'
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
