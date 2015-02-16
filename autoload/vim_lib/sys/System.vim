@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-16 14:13:43
+" Last Change: 2015-02-16 17:36:50
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -142,6 +142,14 @@ function! s:Class.au(events, listener) " {{{
   call self._listen('autocmd_' . a:events, a:listener)
 endfunction " }}}
 
+"" {{{
+" Метод определяет функцию-обработчик (слушатель) для пункта меню.
+" Слушатель должен быть методом вызываемого класса или ссылкой на глобальную функцию.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, c.
+" @param string point Наименование создаваемого пункта меню.
+" @param string listener Имя метода класса или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
+" @param integer priority [optional] Приоритет создаваемого пункта меню. Чем данное значение ниже, тем выше приоритет.
+"" }}}
 function! s:Class.menu(mode, point, listener, ...) " {{{
   let l:priority = (exists('a:1'))? a:1 : ''
   call self._listen('menu_' . a:mode . ':' . a:point, a:listener)
@@ -183,6 +191,12 @@ function! s:Class.ignoreAu(events, ...) " {{{
   endif
 endfunction " }}}
 
+"" {{{
+" Метод удаляет функции-обработчики (слушатели) для пункта меню.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string point Наименование целевого пункта меню.
+" @param string listener [optional] Имя удаляемой функции-слушателя или ссылка на глобальную функцию. Если параметр не задан, удаляются все слушатели данного пункта меню.
+"" }}}
 function! s:Class.ignoreMenu(mode, point, ...) " {{{
   if exists('a:1')
     call self._ignore('menu_' . a:mode . ':' . a:point, a:1)
@@ -198,7 +212,7 @@ endfunction " }}}
 let s:Class._fire = s:Class.fire
 "" {{{
 " Метод генерирует глобальное событие клавиатуры.
-" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, l, c.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, c.
 " @param string sequence Комбинация клавишь, для которой генерируется событие нажатия.
 "" }}}
 function! s:Class.fire(mode, event) " {{{
@@ -213,6 +227,11 @@ function! s:Class.doau(events) " {{{
   call self._fire('autocmd_' . a:events)
 endfunction " }}}
 
+"" {{{
+" Метод имитирует активацию пункта меню.
+" @param string mode Режим привязки. Возможно одно из следующих значений: n, v, o, i, c.
+" @param string sequence Пункт меню, для которого генерируется событие активации.
+"" }}}
 function! s:Class.domenu(mode, point) " {{{
   call self._fire('menu_' . a:mode . ':' . a:point)
 endfunction " }}}
