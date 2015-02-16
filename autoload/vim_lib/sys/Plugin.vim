@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 13:58:18
-" Last Change: 2015-02-15 15:41:40
+" Last Change: 2015-02-16 15:54:06
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -90,10 +90,26 @@ function! s:Class.new(name, version, ...) " {{{
     return s:NullPlugin.new(a:name)
   endif
   let l:obj = self.bless()
+  "" {{{
+  " @var stinrg Имя плагина.
+  "" }}}
   let l:obj.name = a:name
+  "" {{{
+  " @var string Версия плагина.
+  "" }}}
   let l:obj.version = a:version
+  "" {{{
+  " @var hash Словарь команд, определенных плагином. Словарь имеет следующую структуру: {команда: метод, ...}.
+  "" }}}
   let l:obj.commands = {}
+  "" {{{
+  " @var hash Словарь привязок горячих клавишь, определенных плагином. Словарь имеет следующую структуру: {метод: комбинация, ...}.
+  "" }}}
   let l:obj.keyListeners = {}
+  "" {{{
+  " @var hash Словарь пунктов меню, определенных плагином. Словарь имеет следующую структуру: {пункт: метод, ...}.
+  "" }}}
+  let l:obj.menuPoints = {}
   let l:obj.savecpo = &l:cpo
   let self.plugins[a:name] = l:obj
   set cpo&vim
@@ -145,17 +161,23 @@ function! s:Class.map(sequence, method) " {{{
 endfunction " }}}
 
 "" {{{
-" Метод определяет обработчик события редактора.
-" При возникновении этих событий будут вызываться методы плагина, определенные в его интерфейсе. Так, событие вида:
-"   call s:p.au('VimEnter', '*', 'method')
-" выполнит метод 'MyPlugin#method'.
-" Обработчики не будут созданы, если плагин отключен.
-" @param string event Событие редактора (|autocmd-events|).
-" @param string template Шаблон, используемый для определения типа файла.
+" Метод определяет пункт меню для данного плагина.
+" Пункт добавляется по адресу Plugins.имяПлагина.point
+" При выборе данного пункта меню, вызывается метод плагина, определенный в его интерфейсе. Так, событие вида:
+"   call s:p.menu('test', 'mehod')
+" выполнит метод 'myPlugin#method'.
+" Пункты меню не будут созданы, если плагин отключен.
+" @param string point Наименование создаваемого пункта меню.
 " @param string method Имя метода, являющегося частью интерфейса плагина.
+" @param integer priority [optional] Приоритет создаваемого пункта меню. Чем данное значение ниже, тем выше приоритет.
 "" }}}
-function! s:Class.au(event, template, method) " {{{
-  exe 'au ' . a:event . ' ' . a:template . ' call ' . self.getName() . '#' . a:method . '()'
+function! s:Class.menu(point, method, ...) " {{{
+  if exists('a:1')
+    let l:priority = '1.' . len(self.class.plugins) . '.' . a:1
+  else
+    let l:priority = ''
+  endif
+  let self.menuPoints[a:point] = [a:method, l:priority]
 endfunction " }}}
 
 "" {{{
@@ -171,7 +193,12 @@ function! s:Class.reg() " {{{
   " }}}
   " Установка команд плагина. {{{
   for [l:comm, l:method] in items(self.commands)
-    exe 'command! -nargs=* ' . l:comm . ' call ' . self.getName() . '#' . l:method
+    exe 'command! -nargs=* ' . l:comm . ' call ' . self.name . '#' . l:method
+  endfor
+  " }}}
+  " Установка пунктов меню. {{{
+  for [l:point, l:menuListener] in items(self.menuPoints)
+    call s:System.menu('n', 'Plugins.' . self.name . '.' . l:point, function(self.name . '#' . l:menuListener[0]), l:menuListener[1])
   endfor
   " }}}
   " Переопределение и установка привязок плагина. {{{

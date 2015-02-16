@@ -1,5 +1,5 @@
 " Date Create: 2015-01-09 14:35:46
-" Last Change: 2015-02-04 16:18:59
+" Last Change: 2015-02-16 13:59:56
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -24,6 +24,9 @@ function! s:Class.map(sequence, method) " {{{
 endfunction " }}}
 
 function! s:Class.au(event, template, method) " {{{
+endfunction " }}}
+
+function! s:Class.menu(point, method) " {{{
 endfunction " }}}
 
 function! s:Class.reg() " {{{

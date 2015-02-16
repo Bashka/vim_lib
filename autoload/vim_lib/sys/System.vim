@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-15 16:08:27
+" Last Change: 2015-02-16 14:13:43
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -121,11 +121,11 @@ unlet s:Class.listen
 " @param string sequence Комбинация клавишь, для которой создается привязка.
 " @param string listener Имя метода класса или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
 "" }}}
-function! s:Class.map(mode, sequence, listen) " {{{
+function! s:Class.map(mode, sequence, listener) " {{{
   " Исключаем автоматический перевод комбинаций вида <C-...> в ^... при вызове noremap.
   let l:modSeq = substitute(a:sequence, '<', '\\<', '')
   let l:modSeq = substitute(l:modSeq, '>', '\\>', '')
-  call self._listen('keyPress_' . a:mode . ':' . a:sequence, a:listen)
+  call self._listen('keyPress_' . a:mode . ':' . a:sequence, a:listener)
   exe a:mode . 'noremap <silent> ' . a:sequence . ' :call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
 endfunction " }}}
 
@@ -135,11 +135,17 @@ endfunction " }}}
 " @param string events Имена событий, перечисленных через запятую, к которым выполняется привязка. Доступно одной из приведенных в разделе |autocommand-events| значений.
 " @param string listener Имя метода класса или ссылка на глобальную функцию, используемую в качестве функции-обработчика.
 "" }}}
-function! s:Class.au(events, listen) " {{{
+function! s:Class.au(events, listener) " {{{
   if !has_key(self.listeners, 'autocmd_' . a:events)
     exe 'au ' . a:events . ' * :call vim_lib#sys#System#.new().doau("' . a:events . '")'
   endif
-  call self._listen('autocmd_' . a:events, a:listen)
+  call self._listen('autocmd_' . a:events, a:listener)
+endfunction " }}}
+
+function! s:Class.menu(mode, point, listener, ...) " {{{
+  let l:priority = (exists('a:1'))? a:1 : ''
+  call self._listen('menu_' . a:mode . ':' . a:point, a:listener)
+  exe a:mode . 'menu ' . l:priority . ' ' . a:point . ' :call vim_lib#sys#System#.new().domenu("' . a:mode . '", "' . a:point . '")<CR>'
 endfunction " }}}
 
 " Метод ignore примеси EventHandle выносится в закрытую область класса.
@@ -177,6 +183,17 @@ function! s:Class.ignoreAu(events, ...) " {{{
   endif
 endfunction " }}}
 
+function! s:Class.ignoreMenu(mode, point, ...) " {{{
+  if exists('a:1')
+    call self._ignore('menu_' . a:mode . ':' . a:point, a:1)
+  else
+    call self._ignore('menu_' . a:mode . ':' . a:point)
+  endif
+  if len(self.listeners['menu_' . a:mode . ':' . a:point]) == 0
+   exe a:mode . 'unmenu ' . a:point
+  endif
+endfunction " }}}
+
 " Метод fire примеси EventHandle выносится в закрытую область класса.
 let s:Class._fire = s:Class.fire
 "" {{{
@@ -194,6 +211,10 @@ endfunction " }}}
 "" }}}
 function! s:Class.doau(events) " {{{
   call self._fire('autocmd_' . a:events)
+endfunction " }}}
+
+function! s:Class.domenu(mode, point) " {{{
+  call self._fire('menu_' . a:mode . ':' . a:point)
 endfunction " }}}
 
 "" {{{
