@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-19 13:26:37
+" Last Change: 2015-02-19 14:43:57
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -267,6 +267,7 @@ endfunction " }}}
 "" }}}
 function! s:Class.temp() " {{{
   call self.option('buftype', 'nofile')
+  call self.option('swapfile', '0')
 endfunction " }}}
 
 " Метод listen примеси EventHandle выносится в закрытую область класса.
