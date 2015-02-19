@@ -1,10 +1,11 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-02-09 14:53:39
+" Last Change: 2015-02-19 13:26:37
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
 let s:Object = g:vim_lib#base#Object#
 let s:EventHandle = g:vim_lib#base#EventHandle#
+let s:Content = g:vim_lib#sys#Content#.new()
 
 "" {{{
 " Класс представляет буфер редактора.
@@ -171,6 +172,16 @@ endfunction " }}}
 function! s:Class.active() " {{{
   exe 'buffer ' . self.number
   cal self._setOptions()
+endfunction " }}}
+
+"" {{{
+" Метод перерисовывает вызываемый буфер.
+"" }}}
+function! s:Class.redraw() " {{{
+  call self.select()
+  let l:pos = s:Content.pos()
+  call self.active()
+  call s:Content.pos(l:pos)
 endfunction " }}}
 
 "" {{{
