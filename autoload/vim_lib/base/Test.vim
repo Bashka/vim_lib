@@ -1,5 +1,5 @@
 " Date Create: 2015-01-06 13:15:51
-" Last Change: 2015-01-11 15:56:18
+" Last Change: 2015-02-19 19:51:49
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -287,6 +287,7 @@ endfunction " }}}
 "" {{{
 " Метод выполняет тестирование.
 " @param string methodName [optional] Имя запускаемого метода для тестирования. Если параметр не передан, запускаются все методы класса, название которых начинается на "test".
+" @return bool true - если тестирование пройдено успешно, иначе - false.
 "" }}}
 function! s:Test.run(...) " {{{
   let self.countTests = 0
@@ -308,8 +309,10 @@ function! s:Test.run(...) " {{{
   echo 'Time: ' . self.runtime . 's'
   if self.countFail == 0
     echo 'OK'
+    return 1
   else
     echo 'FAILURES'
+    return 0
   endif
   echo '(Tests: ' . self.countTests . ', Assertions: ' . self.countAsserting . ', Failures: ' . self.countFail . ')'
 endfunction " }}}

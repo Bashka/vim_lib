@@ -1,5 +1,5 @@
 " Date Create: 2015-01-12 23:45:01
-" Last Change: 2015-01-18 15:31:00
+" Last Change: 2015-02-22 13:35:12
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -88,6 +88,17 @@ endfunction " }}}
 "" }}}
 function! s:Class.deleteFile() " {{{
   call delete(self.getAddress())
+endfunction " }}}
+
+"" {{{
+" Метод удаляет каталог.
+"" }}}
+function! s:Class.deleteDir() " {{{
+  if has("win16") || has("win32") || has("win64")
+    call system('rmdir /s /q ' . self.getAddress())
+  else
+    call system('rm -rf ' . self.getAddress())
+  endif
 endfunction " }}}
 
 "" {{{

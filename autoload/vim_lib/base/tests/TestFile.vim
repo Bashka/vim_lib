@@ -1,5 +1,5 @@
 " Date Create: 2015-01-13 09:00:17
-" Last Change: 2015-01-18 15:31:19
+" Last Change: 2015-02-22 13:37:13
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -116,7 +116,7 @@ function! s:Test.testIsDir() " {{{
   call self.assertFalse(l:obj.isDir())
 endfunction " }}}
 " }}}
-" createDir, createFile, deleteFile {{{
+" createDir, createFile, deleteFile, deleteDir {{{
 "" {{{
 " Должен создавать новый каталог.
 " @covers vim_lib#base#File#.createDir
@@ -152,6 +152,18 @@ function! s:Test.testDeleteFile() " {{{
   let l:obj = s:File.relative('File/newfile.txt')
   call self.assertTrue(l:obj.isExists())
   call l:obj.deleteFile()
+  call self.assertFalse(l:obj.isExists())
+endfunction " }}}
+
+"" {{{
+" Должен удалять каталог.
+" @covers vim_lib#base#File#.deleteDir
+"" }}}
+function! s:Test.testDeleteDir() " {{{
+  call mkdir(fnamemodify(expand('%'), ':p:h') . '/File/newdir')
+  let l:obj = s:File.relative('File/newdir')
+  call self.assertTrue(l:obj.isExists())
+  call l:obj.deleteDir()
   call self.assertFalse(l:obj.isExists())
 endfunction " }}}
 " }}}
