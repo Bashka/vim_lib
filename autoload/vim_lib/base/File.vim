@@ -1,5 +1,5 @@
 " Date Create: 2015-01-12 23:45:01
-" Last Change: 2015-02-22 13:35:12
+" Last Change: 2015-02-22 13:58:12
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -65,6 +65,22 @@ endfunction " }}}
 "" }}}
 function! s:Class.getChild(name) " {{{
   return self.class.absolute(self.getAddress() . self.class.slash . a:name)
+endfunction " }}}
+
+"" {{{
+" Метод возвращает массив имен файлов, содержащихся в данном каталоге, за исключением файлов . и ..
+" @return array Массив имен файлов, содержащихся в данном каталоге.
+"" }}}
+function! s:Class.getChildren() " {{{
+  let l:address = self.getAddress()
+  let l:childAddress = split(globpath(l:address, '*') . "\n" . globpath(l:address, '.*'), "\n")
+  let l:childNames = []
+  for l:file in l:childAddress
+    if l:file !~# '\/\.\.\/\?$' && l:file !~# '\/\.\/\?$'
+      call add(l:childNames, fnamemodify(l:file, ':t'))
+    endif
+  endfor
+  return l:childNames
 endfunction " }}}
 
 "" {{{
