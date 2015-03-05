@@ -1,5 +1,5 @@
 " Date Create: 2015-01-12 23:45:01
-" Last Change: 2015-02-22 14:03:32
+" Last Change: 2015-03-05 11:49:48
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -30,7 +30,7 @@ endfunction " }}}
 "" }}}
 function! s:Class.absolute(address) " {{{
   let l:obj = self.bless()
-  let l:obj.address = a:address
+  let l:obj.address = expand(a:address)
   return l:obj
 endfunction " }}}
 
