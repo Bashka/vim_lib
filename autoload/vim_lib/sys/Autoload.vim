@@ -1,5 +1,5 @@
 " Date Create: 2015-03-04 11:34:58
-" Last Change: 2015-03-05 23:16:45
+" Last Change: 2015-03-14 09:20:11
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -27,6 +27,9 @@ call add(s:rtp, '.vim')
 exe 'set rtp=' . join(s:rtp, ',')
 " }}}
 
+"" {{{
+" Команда подключает указанный плагин для текущего уровня загрузки.
+"" }}}
 com! -nargs=+ Plugin call vim_lib#sys#Autoload#plugin(<args>)
 
 "" {{{
