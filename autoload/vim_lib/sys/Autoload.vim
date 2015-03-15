@@ -1,5 +1,5 @@
 " Date Create: 2015-03-04 11:34:58
-" Last Change: 2015-03-14 09:20:11
+" Last Change: 2015-03-15 16:07:49
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -68,4 +68,19 @@ endfunction " }}}
 "" }}}
 function! vim_lib#sys#Autoload#getLevels() " {{{
   return g:vim_lib#sys#Autoload#levels
+endfunction " }}}
+
+"" {{{
+" Метод определяет, используется ли заданный плагин.
+" Метод вернет true даже в том случае, если плагин физически не установлен, но подключен командой Plugin.
+" @param string name Имя целевого плагина.
+" @return bool true - если плагин используется, иначе - false.
+"" }}}
+function! vim_lib#sys#Autoload#isPlug(name) " {{{
+  for l:body in values(g:vim_lib#sys#Autoload#levels)
+    if index(l:body.plugins, a:name) != -1
+      return 1
+    endif
+  endfor
+  return 0
 endfunction " }}}
