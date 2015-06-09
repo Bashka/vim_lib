@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-02-16 17:36:50
+" Last Change: 2015-06-09 05:43:22
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -44,6 +44,16 @@ endfunction " }}}
 function! s:Class.exe(command) " {{{
   " Вызов для MacVim, которые не наследуют переменные окружения
   exe '!' . ((has('mac') && &shell =~ 'sh$')? 'EDITOR="" ' : '') . a:command
+endfunction " }}}
+
+"" {{{
+" Метод выполняет команду в командной оболочке аналогично методу exe, но в "тихом режиме".
+" @param string command Выполняемая команда.
+"" }}}
+function! s:Class.silentExe(command) " {{{
+  " Вызов для MacVim, которые не наследуют переменные окружения
+  exe 'silent !' . ((has('mac') && &shell =~ 'sh$')? 'EDITOR="" ' : '') . a:command
+  redraw!
 endfunction " }}}
 
 "" {{{
