@@ -1,5 +1,5 @@
 " Date Create: 2015-03-04 11:34:58
-" Last Change: 2015-03-15 16:07:49
+" Last Change: 2015-06-13 16:46:58
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -24,7 +24,7 @@ else
   call add(s:rtp, $HOME . '/.vim')
 endif
 call add(s:rtp, '.vim')
-exe 'set rtp=' . join(s:rtp, ',')
+let &rtp = join(s:rtp, ',')
 " }}}
 
 "" {{{
@@ -53,7 +53,7 @@ function! vim_lib#sys#Autoload#plugin(name, ...) " {{{
   let l:plug = s:File.absolute(l:level . s:File.slash . l:plugdir . s:File.slash . a:name)
   if l:plug.isDir()
     call add(g:vim_lib#sys#Autoload#levels[l:level]['plugins'], a:name)
-    exe 'set rtp+=' . l:plug.getAddress()
+    let &rtp = &rtp . ',' .  l:plug.getAddress()
     if exists('a:1')                                                                                                                                
       for l:prop in keys(a:1)
         let g:[a:name. '#' . l:prop] = a:1[l:prop]
