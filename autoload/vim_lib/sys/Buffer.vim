@@ -1,5 +1,5 @@
 " Date Create: 2015-01-07 16:18:33
-" Last Change: 2015-06-28 17:11:10
+" Last Change: 2015-06-28 17:25:54
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -178,7 +178,6 @@ endfunction " }}}
 " Метод перерисовывает вызываемый буфер.
 "" }}}
 function! s:Class.redraw() " {{{
-  call self.select()
   let l:pos = s:Content.pos()
   call self.active()
   call s:Content.pos(l:pos)
