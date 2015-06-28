@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-06-09 05:43:22
+" Last Change: 2015-06-28 17:31:31
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -98,13 +98,15 @@ endfunction " }}}
 " Метод запрашивает строку у пользователя.
 " @param string msg Заголовок запроса.
 " @param string color [optional] Цвет заголовка.
+" @param string text [optional] Начальное значение строки.
 " @return string Строка, введеная пользователем.
 "" }}}
 function! s:Class.read(msg, ...) " {{{
   let l:color = (exists('a:1'))? a:1 : 'None'
+  let l:text = (exists('a:2'))? a:2 : ''
   call inputsave()
   exe 'echohl ' . l:color
-  let l:result = input(a:msg)
+  let l:result = input(a:msg, l:text)
   echohl None
   call inputrestore()
   return l:result
