@@ -1,5 +1,5 @@
 " Date Create: 2015-02-02 10:05:45
-" Last Change: 2015-07-12 15:19:28
+" Last Change: 2015-07-12 15:23:40
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -138,7 +138,11 @@ function! s:Class.map(mode, sequence, listener) " {{{
   let l:modSeq = substitute(a:sequence, '<', '\\<', '')
   let l:modSeq = substitute(l:modSeq, '>', '\\>', '')
   call self._listen('keyPress_' . a:mode . ':' . a:sequence, a:listener)
-  exe a:mode . 'noremap <silent> ' . a:sequence . ' <C-o>:call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
+  if a:mode == 'i'
+    exe a:mode . 'noremap <silent> ' . a:sequence . ' <C-o>:call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
+  else
+    exe a:mode . 'noremap <silent> ' . a:sequence . ' :call vim_lib#sys#System#.new().fire("' . a:mode . '", "' . l:modSeq . '")<CR>'
+  endif
 endfunction " }}}
 
 "" {{{
